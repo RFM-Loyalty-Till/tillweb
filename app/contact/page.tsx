@@ -272,8 +272,8 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-navy mb-2">Phone</h3>
-                    <a href="tel:+15551234567" className="text-navy/70 hover:text-coral transition-colors">
-                      +1 (555) 123-4567
+                    <a href="tel:+97144510012" className="text-navy/70 hover:text-coral transition-colors">
+                      +971 4 451 0012
                     </a>
                   </div>
                 </div>
@@ -285,8 +285,8 @@ export default function ContactPage() {
                   <div>
                     <h3 className="text-lg font-semibold text-navy mb-2">Office</h3>
                     <p className="text-navy/70">
-                      123 Restaurant Row<br />
-                      San Francisco, CA 94102
+                      Office 1201, Control Tower<br />
+                      Motor City, Dubai
                     </p>
                   </div>
                 </div>
@@ -299,11 +299,11 @@ export default function ContactPage() {
                 <div className="space-y-2 text-navy/70">
                   <div className="flex justify-between">
                     <span>Monday - Friday</span>
-                    <span>9:00 AM - 6:00 PM PST</span>
+                    <span>9:00 AM - 6:00 PM GST</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Saturday</span>
-                    <span>10:00 AM - 4:00 PM PST</span>
+                    <span>10:00 AM - 4:00 PM GST</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Sunday</span>
