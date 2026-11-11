@@ -17,7 +17,7 @@
   --ink: #1a1b3a; --muted: #4b5484; --faint: #6b7397;
   --navy: #1a1b3a; --on-navy: #ffffff; --orange: #d73527; --tag-bg: #ffe8e4; --tag-fg: #c62a17;
   --good: #15803d; --good-bg: #f0fdf4; --good-line: #86efac;
-  --seg-fee: #9ea3bd; --seg-extra: #2e3166; --seg-ours: #e85a4f; --seg-rfm: #f4a261; --focus: rgba(232, 90, 79, 0.35);
+  --seg-fee: #9ea3bd; --seg-extra: #2e3166; --seg-ours: #e85a4f; --seg-rfm: #f4a261; --focus: rgba(232, 90, 79, 0.35); --art-bg: #f9f8f6;
   --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
@@ -168,6 +168,20 @@ tfoot th, tfoot td { border-top: 2px solid var(--ink); font-weight: 800; font-si
 .sources ul { margin: 8px 0 0; padding-left: 18px; line-height: 1.55; }
 .sources li { margin-bottom: 4px; }
 
+/* Pictures: hero banner, and a product picture in each box. Tiles keep the photos' own light backdrop in both themes. */
+.hero-img { display: block; width: 100%; height: auto; margin: 0 0 24px; border-radius: 16px; border: 1px solid var(--line); }
+.art { display: grid; gap: 10px; margin: 0 0 14px; }
+.art-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.art figure { margin: 0; }
+.art img { display: block; width: 100%; height: 150px; border-radius: 12px; border: 1px solid var(--line); background: var(--art-bg); }
+.art .fit { object-fit: contain; padding: 8px; }
+.art .fill { object-fit: cover; object-position: top left; }
+.art figcaption { margin-top: 4px; font-size: 12px; color: var(--faint); }
+.with-art { display: flex; align-items: center; gap: 14px; }
+.with-art > div { flex: 1; min-width: 0; }
+.with-art img { flex: none; height: 132px; width: auto; }
+.print-only { display: none; }
+
 .sticky {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
@@ -178,6 +192,42 @@ tfoot th, tfoot td { border-top: 2px solid var(--ink); font-weight: 800; font-si
 .sticky strong.good { color: var(--good); }
 @media (min-width: 960px) { .sticky { display: none; } }
 @media (prefers-reduced-motion: reduce) { .seg { transition: none; } }
+
+/* Export PDF uses the browser's print dialog (Save as PDF). The page prints as a light, single-column report:
+   the result first, then the inputs it was worked out from. */
+@page { size: A4; margin: 12mm; }
+@media print {
+  :root:not([data-theme="light"]), :root[data-theme="dark"], :root {
+    --bg: #ffffff; --surface: #ffffff; --well: #f3f0e6; --line: #e6e2d3; --line-strong: #d2cdbb;
+    --ink: #1a1b3a; --muted: #4b5484; --faint: #6b7397;
+    --navy: #1a1b3a; --on-navy: #ffffff; --orange: #d73527; --tag-bg: #ffe8e4; --tag-fg: #c62a17;
+    --good: #15803d; --good-bg: #f0fdf4; --good-line: #86efac;
+    --seg-fee: #9ea3bd; --seg-extra: #2e3166; --seg-ours: #e85a4f; --seg-rfm: #f4a261; color-scheme: light;
+  }
+  body { font-size: 13px; }
+  .wrap { max-width: none; padding: 0; }
+  .actions, .sticky, .step, .incl, .hint, .sources, .card.off, .art, .with-art img { display: none !important; }
+  .print-only { display: block; }
+  .hero-img { width: 72%; margin-bottom: 10px; }
+  .intro { max-width: none; margin-bottom: 10px; }
+  h1 { font-size: 24px; }
+  .lead { margin-top: 6px; }
+  .grid { display: flex; flex-direction: column; gap: 12px; }
+  .col { gap: 12px; }
+  /* First page: rate difference and verdict side by side, the full comparison under them. */
+  .col-results { order: -1; position: static; display: grid; grid-template-columns: 1fr 1fr; align-items: stretch; }
+  .col-results > section:nth-child(2) { grid-column: 1 / -1; order: 2; }
+  .big { font-size: 28px; } .v-num { font-size: 32px; }
+  .facts { margin-top: 10px; padding-top: 10px; }
+  .track { height: 16px; } .bars { gap: 10px; }
+  table { margin-top: 12px; } th, td { padding: 5px 0; }
+  .na { min-height: 34px; }
+  .card, .verdict { break-inside: avoid; padding: 14px 16px; }
+  .line { padding: 8px 0; }
+  .input { min-height: 34px; }
+  .input-lg { min-height: 40px; font-size: 18px; }
+  .seg, .num, .verdict, .tag, .legend i { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
 </style>
 </head>
 <body>
@@ -185,14 +235,18 @@ tfoot th, tfoot td { border-top: 2px solid var(--ink); font-weight: 800; font-si
   <header class="top">
     <div class="brand"><b>RFM Loyalty</b> <i aria-hidden="true">×</i> Till</div>
     <div class="actions">
+      <button type="button" class="btn" id="pdf">Export PDF</button>
       <button type="button" class="btn" id="copy">Copy summary</button>
       <button type="button" class="btn btn-quiet" id="reset">Reset</button>
     </div>
   </header>
 
+  <img class="hero-img" src="/deal-calculator/hero.webp" width="1200" height="400" alt="RFM Loyalty 4 in 1 solution: payments, restaurant solution, self checkout and payments, merchant loyalty">
+
   <div class="intro">
     <p class="eyebrow" id="eyebrow">Cost comparison</p>
     <h1>The card rate is only <span>part of the cost.</span></h1>
+    <p class="print-only working" id="print-date"></p>
     <p class="lead">A bank or payment provider may offer a lower card rate, but it only supplies the card machines. Compare that, plus outside suppliers for the restaurant system, loyalty and marketing, with one RFM Loyalty quotation.</p>
   </div>
 
@@ -216,6 +270,7 @@ tfoot th, tfoot td { border-top: 2px solid var(--ink); font-weight: 800; font-si
 
       <section class="card" aria-labelledby="s2">
         <h2 id="s2"><span class="num">2</span>Payment device</h2>
+        <div class="art"><img class="fit" src="/deal-calculator/payment.webp" width="222" height="222" loading="lazy" alt="RFM payment device showing Payment Approved, with a contactless card"></div>
         <div class="count">
           <span class="label" id="devices-label">Number of payment devices</span>
           <div class="qty" role="group" aria-labelledby="devices-label">
@@ -292,9 +347,12 @@ tfoot th, tfoot td { border-top: 2px solid var(--ink); font-weight: 800; font-si
         </div>
 
         <div class="line" data-line="app">
-          <div class="line-head">
-            <span class="label">Handheld point-of-sale app <em>per device, per month</em></span>
-            <p class="hint">Take orders and payment at the table. Till Go runs on RFM payment devices; other providers' devices cannot run it, so the restaurant would need a separate handheld licence.</p>
+          <div class="line-head with-art">
+            <div>
+              <span class="label">Handheld point-of-sale app <em>per device, per month</em></span>
+              <p class="hint">Take orders and payment at the table. Till Go runs on RFM payment devices; other providers' devices cannot run it, so the restaurant would need a separate handheld licence.</p>
+            </div>
+            <img src="/deal-calculator/handheld.webp" width="218" height="560" loading="lazy" alt="Till Go menu running on an RFM Loyalty handheld payment device">
           </div>
         </div>
 
@@ -312,6 +370,10 @@ tfoot th, tfoot td { border-top: 2px solid var(--ink); font-weight: 800; font-si
           <label class="incl"><input type="checkbox" id="on-pos"> Include</label>
         </div>
         <p class="sub">Orders, menu, kitchen screens and reports. With RFM this is Till.</p>
+        <div class="art art-2">
+          <figure><img class="fill" style="object-position: center" src="/deal-calculator/cashregister.webp" width="640" height="470" loading="lazy" alt="Cash register with touch screen, receipt printer, cash drawer and barcode scanner"><figcaption>Cash register</figcaption></figure>
+          <figure><img class="fill" src="/deal-calculator/kds.webp" width="640" height="405" loading="lazy" alt="Kitchen display screen showing two walk-in orders"><figcaption>Kitchen display</figcaption></figure>
+        </div>
         <div class="pair pair-head" aria-hidden="true"><span>RFM Loyalty</span><span>Outside supplier</span></div>
         <div class="line" data-line="pos">
           <div class="line-head"><span class="label">Restaurant system <em>per month</em></span>
@@ -325,6 +387,7 @@ tfoot th, tfoot td { border-top: 2px solid var(--ink); font-weight: 800; font-si
           <label class="incl"><input type="checkbox" id="on-loyalty"> Include</label>
         </div>
         <p class="sub">Points, rewards and offers that bring customers back.</p>
+        <div class="art"><img class="fit" src="/deal-calculator/loyalty.webp" width="195" height="242" loading="lazy" alt="RFM payment device showing a customer's rewards, with Earn points and Redeem points"></div>
         <div class="pair pair-head" aria-hidden="true"><span>RFM Loyalty</span><span>Outside supplier</span></div>
         <div class="line" data-line="loyalty">
           <div class="line-head"><span class="label">Loyalty programme <em>per month</em></span>
@@ -574,6 +637,13 @@ tfoot th, tfoot td { border-top: 2px solid var(--ink); font-weight: 800; font-si
     try { localStorage.removeItem(KEY); } catch (e) {}
     state = copy(DEFAULTS); $('name').value = ''; fill(); render();
   });
+  $('pdf').addEventListener('click', function () {
+    var name = $('name').value.trim(), title = document.title;
+    // The browser uses the page title as the suggested PDF file name.
+    document.title = 'RFM Loyalty cost comparison' + (name ? ' - ' + name : '');
+    window.print();
+    setTimeout(function () { document.title = title; }, 500);
+  });
   $('copy').addEventListener('click', function () {
     var r = last, name = $('name').value.trim(), L = [];
     L.push('Cost comparison' + (name ? ' for ' + name : ''));
@@ -595,6 +665,7 @@ tfoot th, tfoot td { border-top: 2px solid var(--ink); font-weight: 800; font-si
     catch (e) { done('Copy not available'); }
   });
 
+  $('print-date').textContent = 'Prepared ' + new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
   fill(); render();
 })();
 </script>
