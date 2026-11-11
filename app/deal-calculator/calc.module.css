@@ -1,0 +1,204 @@
+/* Deal calculator. Controls come from Astryx; this file is the page's own layout and type.
+   Scene: a rep holding a phone or tablet across a restaurant counter in daylight, so the page
+   is light, high-contrast and still. Neutral ground, near-black ink, hairlines for structure.
+   One accent (Till coral) marks RFM Loyalty and nothing else. */
+
+.page {
+  --ground: oklch(0.985 0 0);
+  --ink: oklch(0.18 0 0);
+  --muted: oklch(0.44 0 0);
+  --faint: oklch(0.56 0 0);
+  --line: oklch(0.9 0 0);
+  --line-strong: oklch(0.8 0 0);
+  --well: oklch(0.955 0 0);
+  --accent: oklch(0.6 0.19 31);
+  --accent-soft: oklch(0.82 0.09 35);
+  --other: oklch(0.42 0 0);
+  --other-soft: oklch(0.76 0 0);
+  --sans: var(--font-geist), system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: var(--font-geist-mono), ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Astryx tokens, pointed at this page's palette and type. */
+  --font-family-body: var(--sans);
+  --font-family-heading: var(--sans);
+  --color-background-body: var(--ground);
+
+  color-scheme: light;
+  min-height: 100dvh;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 4.5rem; /* room for the sticky answer on phones */
+}
+/* The marketing site paints <body> beige; this page owns its whole ground. */
+:global(body):has(.page) { background: oklch(0.985 0 0); }
+.page *, .page *::before, .page *::after { box-sizing: border-box; }
+.page h1, .page h2, .page h3, .page p, .page dl, .page dd, .page ul { margin: 0; }
+.page a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+
+.srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.printOnly { display: none; }
+
+/* ── Top bar ─────────────────────────────────────────────── */
+.top {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem;
+  max-width: 76rem; margin: 0 auto; padding: 1.25rem 1.25rem 0;
+}
+.wordmark { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9375rem; font-weight: 600; letter-spacing: -0.01em; }
+.dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--accent); }
+.times { color: var(--faint); font-weight: 400; }
+.actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+/* ── Intro ───────────────────────────────────────────────── */
+.main { max-width: 76rem; margin: 0 auto; padding: 0 1.25rem 3rem; }
+.intro { max-width: 44rem; padding: 3.5rem 0 2rem; }
+.h1 { font-size: 2.75rem; font-weight: 600; line-height: 1.05; letter-spacing: -0.035em; text-wrap: balance; }
+.lead { margin-top: 1rem !important; max-width: 38rem; font-size: 1.0625rem; line-height: 1.55; color: var(--muted); text-wrap: pretty; }
+.hero { display: block; width: 100%; height: auto; border-radius: 0.75rem; }
+
+/* ── Layout ──────────────────────────────────────────────── */
+.grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.5rem; margin-top: 3rem; }
+.inputs { min-width: 0; }
+@media (min-width: 64rem) {
+  .grid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 4.5rem; align-items: start; }
+  .result { position: sticky; top: 1.5rem; }
+  .page { padding-bottom: 0; }
+}
+
+/* ── Sections: a title, then rows divided by hairlines. No boxes. ── */
+.section { padding: 2rem 0 0.5rem; border-top: 1px solid var(--ink); }
+.section:first-child { padding-top: 1.25rem; }
+.section + .section { margin-top: 1.5rem; }
+.sectionHead { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.h2 { font-size: 1.375rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
+.sub { margin-top: 0.375rem !important; max-width: 34rem; font-size: 0.9375rem; color: var(--muted); }
+.off .row, .off .thumbs, .off .counter { opacity: 0.45; }
+
+.salesRow { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; margin-top: 1.25rem; padding-bottom: 1.5rem; }
+@media (min-width: 40rem) { .salesRow { grid-template-columns: 1fr 1fr; } }
+
+.row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.875rem; padding: 1.25rem 0; border-top: 1px solid var(--line); }
+.rowHead { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.rowTitle { font-size: 1rem; font-weight: 600; letter-spacing: -0.005em; }
+.unit { font-family: var(--mono); font-size: 0.75rem; font-weight: 400; color: var(--faint); margin-left: 0.25rem; }
+.hint { margin-top: 0.25rem !important; max-width: 36rem; font-size: 0.875rem; line-height: 1.5; color: var(--muted); text-wrap: pretty; }
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; align-items: end; }
+.single { max-width: 11rem; }
+.prefix { font-family: var(--mono); font-size: 0.75rem; color: var(--faint); }
+
+.rateCell { display: flex; align-items: flex-end; gap: 0.25rem; min-width: 0; }
+.rateCell > :first-child { flex: 1; min-width: 0; }
+.steps { display: inline-flex; gap: 0.25rem; flex: none; font-size: 1.125rem; }
+
+.counter { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 0; margin-top: 1rem; border-top: 1px solid var(--line); }
+.sectionHead + .counter { margin-top: 1.25rem; }
+.counterControl { display: inline-flex; align-items: center; gap: 0.5rem; }
+.counterValue { min-width: 2ch; text-align: right; font-size: 1.25rem; font-weight: 600; }
+
+.na { display: flex; flex-direction: column; gap: 0.375rem; min-width: 0; }
+.naLabel { font-size: 0.875rem; font-weight: 500; }
+.naValue { display: flex; align-items: center; min-height: 2.5rem; font-size: 0.9375rem; color: var(--muted); }
+
+/* ── Pictures: small, quiet, never the subject ───────────── */
+.thumb, .shot { display: block; height: 5.5rem; width: auto; border-radius: 0.5rem; background: oklch(0.975 0 0); }
+.thumb { object-fit: contain; }
+.shot { aspect-ratio: 3 / 2; object-fit: cover; }
+.sectionHead .thumb { height: 4.5rem; }
+.thumbs { display: flex; flex-wrap: wrap; gap: 0.625rem; margin-top: 1rem; padding-bottom: 0.25rem; }
+.thumbs + .row { margin-top: 1rem; }
+.handheld { display: block; flex: none; height: 6.5rem; width: auto; }
+
+/* ── Result ──────────────────────────────────────────────── */
+.result { min-width: 0; }
+.verdict { padding-bottom: 1.75rem; }
+.verdictLabel { font-size: 1rem; font-weight: 500; color: var(--muted); }
+.figure { margin-top: 0.25rem !important; font-size: 3.75rem; font-weight: 600; line-height: 1; letter-spacing: -0.04em; white-space: nowrap; }
+.figure span { font-size: 1.125rem; font-weight: 500; letter-spacing: -0.01em; color: var(--muted); }
+.note { margin-top: 1rem !important; font-size: 0.9375rem; line-height: 1.55; color: var(--muted); text-wrap: pretty; }
+
+.block { padding: 1.5rem 0; border-top: 1px solid var(--line); }
+.blockTitle { font-size: 0.9375rem; font-weight: 600; }
+.working { margin-top: 0.25rem !important; font-size: 0.875rem; color: var(--muted); }
+.facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.75rem; margin-top: 1rem !important; }
+.facts dt { font-size: 0.75rem; line-height: 1.3; color: var(--faint); }
+.facts dd { margin-top: 0.125rem; font-size: 1rem; font-weight: 600; white-space: nowrap; }
+@media (max-width: 26rem) { .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 1rem; } }
+
+.bars { display: grid; gap: 1rem; margin-top: 1rem; }
+.bar { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.375rem 1rem; align-items: baseline; }
+.barName { font-size: 0.875rem; color: var(--muted); }
+.barValue { font-size: 1.0625rem; font-weight: 600; }
+.track { grid-column: 1 / -1; display: flex; height: 0.5rem; }
+.track i { display: block; height: 100%; min-width: 0; transition: width 200ms cubic-bezier(0.22, 1, 0.36, 1); }
+.segFee { background: var(--other); }
+.segExtra { background: var(--other-soft); }
+.segOurs { background: var(--accent); }
+.segRfm { background: var(--accent-soft); }
+.legend { font-size: 0.75rem; color: var(--faint); }
+
+.table { width: 100%; margin-top: 1.25rem; border-collapse: collapse; font-size: 0.875rem; }
+.table th, .table td { padding: 0.5625rem 0; border-top: 1px solid var(--line); text-align: right; vertical-align: top; font-weight: 400; }
+.table th[scope='row'] { text-align: left; padding-right: 0.5rem; }
+.table td { padding-left: 1rem; white-space: nowrap; }
+.table thead th { border-top: 0; padding-top: 0; font-size: 0.75rem; color: var(--faint); padding-left: 1rem; }
+.table tfoot th, .table tfoot td { border-top: 1px solid var(--ink); font-weight: 600; font-size: 0.9375rem; }
+.dim { color: var(--faint); }
+
+/* ── Footer ──────────────────────────────────────────────── */
+.foot { max-width: 46rem; margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); font-size: 0.8125rem; line-height: 1.6; color: var(--muted); }
+.sources { margin-top: 1rem; }
+.sources ul { padding-left: 1.125rem; margin-top: 0.5rem !important; list-style: disc; }
+.sources li { margin-bottom: 0.375rem; }
+
+/* ── Sticky answer (phones) ──────────────────────────────── */
+.sticky {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+  display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem;
+  padding: 0.875rem 1.25rem calc(0.875rem + env(safe-area-inset-bottom, 0px));
+  background: var(--ink); color: oklch(0.8 0 0); font-size: 0.875rem;
+}
+.sticky strong { color: oklch(0.985 0 0); font-size: 1.0625rem; font-weight: 600; white-space: nowrap; }
+@media (min-width: 64rem) { .sticky { display: none; } }
+
+@media (max-width: 40rem) {
+  .top { padding: 1rem 1rem 0; }
+  .main { padding: 0 1rem 2.5rem; }
+  .intro { padding: 2.25rem 0 1.5rem; }
+  .h1 { font-size: 2rem; }
+  .figure { font-size: 2.75rem; }
+  .hero { border-radius: 0.5rem; }
+  .grid { margin-top: 2rem; }
+}
+
+@media (prefers-reduced-motion: reduce) { .track i { transition: none; } }
+
+/* ── Export PDF: the browser's print dialog. Result first, then the inputs behind it. ── */
+@page { size: A4; margin: 12mm; }
+@media print {
+  .page { background: #fff; padding-bottom: 0; font-size: 12px; min-height: 0; }
+  :global(body):has(.page) { background: #fff; }
+  .top { padding: 0; }
+  .main { max-width: none; padding: 0; }
+  .actions, .sticky, .steps, .hint, .sources, .off, .thumbs, .thumb, .handheld { display: none !important; }
+  .printOnly { display: block; margin-top: 0.5rem !important; font-size: 0.8125rem; color: var(--muted); }
+  .intro { max-width: none; padding: 1rem 0 0.75rem; }
+  .h1 { font-size: 1.625rem; }
+  .lead { max-width: none; font-size: 0.875rem; }
+  .hero { display: none; }
+  .grid { display: flex; flex-direction: column; gap: 1.25rem; margin-top: 1rem; }
+  .result { order: -1; position: static; }
+  .verdict { padding-bottom: 1rem; }
+  .figure { font-size: 2.5rem; }
+  .block { padding: 0.75rem 0; break-inside: avoid; }
+  .bars { gap: 0.625rem; margin-top: 0.625rem; }
+  .table { margin-top: 0.75rem; }
+  .table th, .table td { padding: 0.25rem 0; }
+  .section { break-inside: avoid; padding-top: 1rem; }
+  .section + .section { margin-top: 1rem; }
+  .row { padding: 0.5rem 0; }
+  .track i, .dot, .sticky { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

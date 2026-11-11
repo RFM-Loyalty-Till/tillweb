@@ -1,4 +1,9 @@
-@tailwind base;
+/* Tailwind's reset sits in its own low-priority cascade layer. Unlayered, it would override the
+   layered component styles of the Astryx design system used by /deal-calculator. */
+@layer tw-base, reset, astryx-base, astryx-theme;
+@layer tw-base {
+  @tailwind base;
+}
 @tailwind components;
 @tailwind utilities;
 
