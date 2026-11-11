@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Restaurant Deal Calculator | RFM Loyalty</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Sales team tool: standalone page, served at /deal-calculator (see the rewrite in next.config.mjs). -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: inputs on the left, the answer on the right (sticky); one column on a phone with the answer pinned to the bottom edge. */
+:root {
+  --bg: #f5f3e7; --surface: #ffffff; --well: #f3f0e6; --line: #e6e2d3; --line-strong: #d2cdbb;
+  --ink: #1a1b3a; --muted: #4b5484; --faint: #6b7397;
+  --navy: #1a1b3a; --on-navy: #ffffff; --orange: #d73527; --tag-bg: #ffe8e4; --tag-fg: #c62a17;
+  --good: #15803d; --good-bg: #f0fdf4; --good-line: #86efac;
+  --seg-fee: #9ea3bd; --seg-extra: #2e3166; --seg-ours: #e85a4f; --seg-rfm: #f4a261; --focus: rgba(232, 90, 79, 0.35);
+  --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f1016; --surface: #151628; --well: #1e2040; --line: #2a2c4d; --line-strong: #3b3e68;
+  --ink: #f0f0f5; --muted: #c5c8d8; --faint: #9ea3bd;
+  --navy: #e0e1eb; --on-navy: #151628; --orange: #ff6b5a; --tag-bg: #3d1712; --tag-fg: #ffb8ae;
+  --good: #4ade80; --good-bg: #12291b; --good-line: #1f5a37;
+  --seg-fee: #4b5484; --seg-extra: #c5c8d8; --seg-ours: #ff6b5a; --seg-rfm: #f7b87d; --focus: rgba(255, 107, 90, 0.45); color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f1016; --surface: #151628; --well: #1e2040; --line: #2a2c4d; --line-strong: #3b3e68;
+  --ink: #f0f0f5; --muted: #c5c8d8; --faint: #9ea3bd;
+  --navy: #e0e1eb; --on-navy: #151628; --orange: #ff6b5a; --tag-bg: #3d1712; --tag-fg: #ffb8ae;
+  --good: #4ade80; --good-bg: #12291b; --good-line: #1f5a37;
+  --seg-fee: #4b5484; --seg-extra: #c5c8d8; --seg-ours: #ff6b5a; --seg-rfm: #f7b87d; --focus: rgba(255, 107, 90, 0.45); color-scheme: dark }
+
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px;
+  -webkit-font-smoothing: antialiased; font-variant-numeric: tabular-nums;
+}
+.wrap {
+  max-width: 1120px; margin: 0 auto; padding-block: 16px 96px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+a { color: var(--muted); }
+
+.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+.brand { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; font-size: 18px; letter-spacing: -0.02em; }
+.brand i { font-style: normal; font-weight: 400; color: var(--faint); }
+.brand b { color: var(--navy); font-weight: 800; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn {
+  min-height: 40px; padding: 0 14px; font: inherit; font-size: 14px; font-weight: 600; color: var(--ink);
+  background: var(--surface); border: 1px solid var(--line-strong); border-radius: 10px; cursor: pointer;
+}
+.btn-quiet { background: transparent; border-color: transparent; color: var(--muted); }
+.btn:focus-visible, .step:focus-visible, .incl input:focus-visible, summary:focus-visible, a:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--focus); border-radius: 6px; }
+
+.intro { max-width: 720px; margin-bottom: 24px; }
+.eyebrow { margin: 0 0 8px; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--orange); }
+h1 { margin: 0; font-size: clamp(1.75rem, 3.2vw + 1rem, 2.75rem); font-weight: 800; line-height: 1.08; letter-spacing: -0.02em; color: var(--navy); text-wrap: balance; }
+h1 span { color: var(--orange); }
+.lead { margin: 12px 0 0; line-height: 1.6; color: var(--muted); }
+
+.grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.col { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+@media (min-width: 960px) {
+  .grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+  .col-results { position: sticky; top: calc(16px + env(safe-area-inset-top, 0px)); }
+  .wrap { padding-block: 16px 40px; }
+}
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: clamp(16px, 2.5vw, 24px); }
+.card.off .line, .card.off .pair-head { opacity: 0.5; }
+.box-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
+h2 { display: flex; align-items: center; gap: 10px; margin: 0 0 16px; font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
+.box-head h2 { margin: 0; }
+.num { display: inline-grid; place-items: center; width: 26px; height: 26px; flex: none; border-radius: 999px; background: var(--navy); color: var(--on-navy); font-size: 14px; }
+.sub { margin: 4px 0 12px; font-size: 14px; line-height: 1.5; color: var(--muted); }
+.incl { display: inline-flex; align-items: center; gap: 8px; flex: none; min-height: 32px; font-size: 14px; font-weight: 600; color: var(--muted); cursor: pointer; }
+.incl input { width: 20px; height: 20px; margin: 0; accent-color: var(--navy); cursor: pointer; }
+.tag { padding: 2px 8px; border-radius: 8px; background: var(--tag-bg); color: var(--tag-fg); font-size: 12px; font-weight: 600; }
+
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; min-width: 0; }
+.field:last-child { margin-bottom: 0; }
+.label { font-size: 14px; font-weight: 700; }
+.label em { font-style: normal; font-weight: 400; color: var(--faint); }
+.hint { margin: 0; font-size: 13px; line-height: 1.45; color: var(--faint); }
+.in-wrap { position: relative; flex: 1; min-width: 0; }
+.input {
+  width: 100%; min-height: 48px; padding: 0 14px; font: inherit; font-weight: 600; color: var(--ink);
+  background: var(--surface); border: 1px solid var(--line-strong); border-radius: 10px;
+}
+.input:focus-visible { outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px var(--focus); }
+.input:disabled { background: var(--well); color: var(--faint); }
+.input-lg { min-height: 56px; font-size: 22px; font-weight: 700; }
+.input-center { text-align: center; padding: 0 22px 0 8px; font-size: 18px; font-weight: 700; }
+.pad-start { padding-left: 48px; }
+.affix { position: absolute; top: 50%; transform: translateY(-50%); font-size: 13px; font-weight: 600; color: var(--faint); pointer-events: none; }
+.affix-start { left: 12px; } .affix-end { right: 10px; font-size: 15px; }
+.stepper { display: flex; align-items: stretch; gap: 4px; }
+.step {
+  display: inline-grid; place-items: center; flex: none; width: 40px; min-height: 48px; font: inherit; font-size: 20px; line-height: 1;
+  color: var(--ink); background: var(--well); border: 1px solid var(--line-strong); border-radius: 10px; cursor: pointer;
+}
+.step:disabled { opacity: 0.4; cursor: default; }
+@media (max-width: 519px) {
+  .stepper .step { width: 32px; font-size: 18px; }
+  .input-center { padding: 0 18px 0 4px; font-size: 16px; }
+  .affix-end { right: 7px; font-size: 13px; }
+}
+
+/* One cost line: label + hint, then the RFM and other-side inputs next to each other. */
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.pair-head { padding-bottom: 8px; border-bottom: 1px solid var(--line); font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.line { padding: 14px 0; border-top: 1px solid var(--line); }
+.pair-head + .line { border-top: 0; }
+.line:last-child { padding-bottom: 0; }
+.line-head { margin-bottom: 10px; }
+.line-head .label { display: block; margin-bottom: 2px; }
+.cell { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.cap { font-size: 12px; font-weight: 600; color: var(--muted); }
+.na { display: flex; align-items: center; min-height: 48px; padding: 0 12px; border: 1px dashed var(--line-strong); border-radius: 10px; font-size: 14px; font-weight: 600; color: var(--faint); }
+.count { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; padding: 12px 0 14px; }
+.count .label { flex: 1 1 160px; }
+.qty { display: inline-flex; align-items: center; gap: 6px; }
+.qty .step { width: 44px; min-height: 44px; }
+.qty-val { min-width: 36px; text-align: center; font-size: 18px; font-weight: 800; }
+
+.big { margin: 0; font-size: clamp(1.75rem, 3vw + 0.75rem, 2.5rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+.big span { font-size: 16px; font-weight: 600; letter-spacing: 0; color: var(--muted); }
+.good { color: var(--good); }
+.working { margin: 6px 0 0; font-size: 14px; color: var(--muted); }
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 16px 0 0; padding-top: 16px; border-top: 1px solid var(--line); }
+.facts dt { font-size: 12px; line-height: 1.35; color: var(--faint); }
+.facts dd { margin: 2px 0 0; font-weight: 700; }
+
+.bars { display: flex; flex-direction: column; gap: 14px; }
+.bar-label { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 6px; font-size: 14px; font-weight: 600; }
+.bar-label strong { font-size: 18px; font-weight: 800; white-space: nowrap; }
+.track { display: flex; gap: 2px; height: 24px; }
+.seg { display: block; height: 100%; min-width: 0; border-radius: 4px; transition: width 200ms ease-out; }
+.seg-fee { background: var(--seg-fee); } .seg-extra { background: var(--seg-extra); } .seg-ours { background: var(--seg-ours); } .seg-rfm { background: var(--seg-rfm); }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 16px; list-style: none; margin: 0; padding: 0; font-size: 12px; color: var(--muted); }
+.legend li { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 10px; height: 10px; border-radius: 3px; }
+
+table { width: 100%; margin-top: 20px; border-collapse: collapse; font-size: 14px; }
+th, td { padding: 9px 0; border-top: 1px solid var(--line); text-align: right; vertical-align: top; }
+th[scope="row"] { text-align: left; font-weight: 500; padding-right: 8px; }
+thead th { border-top: 0; padding-top: 0; font-size: 12px; font-weight: 600; color: var(--faint); padding-left: 12px; }
+td { white-space: nowrap; padding-left: 12px; font-weight: 600; }
+td.inc { color: var(--good); }
+td.dim { color: var(--faint); font-weight: 500; }
+tfoot th, tfoot td { border-top: 2px solid var(--ink); font-weight: 800; font-size: 15px; }
+
+.verdict { border-radius: 16px; padding: clamp(16px, 2.5vw, 24px); background: var(--surface); border: 1px solid var(--line-strong); }
+.verdict.is-good { background: var(--good-bg); border-color: var(--good-line); }
+.verdict h2 { margin: 0; font-size: 15px; color: var(--muted); }
+.verdict.is-good h2, .verdict.is-good .v-num { color: var(--good); }
+.v-num { margin: 4px 0 0; font-size: clamp(2rem, 4vw + 0.75rem, 3rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+.v-num span { font-size: 18px; font-weight: 600; letter-spacing: 0; color: var(--muted); }
+.v-note { margin: 10px 0 0; font-size: 14px; line-height: 1.5; color: var(--muted); }
+
+.foot { max-width: 760px; margin: 24px 0 0; font-size: 12px; line-height: 1.6; color: var(--faint); }
+.sources { max-width: 760px; margin-top: 12px; font-size: 13px; color: var(--muted); }
+.sources summary { cursor: pointer; font-weight: 600; min-height: 32px; display: list-item; }
+.sources ul { margin: 8px 0 0; padding-left: 18px; line-height: 1.55; }
+.sources li { margin-bottom: 4px; }
+
+.sticky {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px max(16px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  background: var(--surface); border-top: 1px solid var(--line); font-size: 14px; font-weight: 600; color: var(--muted);
+}
+.sticky strong { font-size: 18px; font-weight: 800; color: var(--ink); white-space: nowrap; }
+.sticky strong.good { color: var(--good); }
+@media (min-width: 960px) { .sticky { display: none; } }
+@media (prefers-reduced-motion: reduce) { .seg { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><b>RFM Loyalty</b> <i aria-hidden="true">×</i> Till</div>
+    <div class="actions">
+      <button type="button" class="btn" id="copy">Copy summary</button>
+      <button type="button" class="btn btn-quiet" id="reset">Reset</button>
+    </div>
+  </header>
+
+  <div class="intro">
+    <p class="eyebrow" id="eyebrow">Cost comparison</p>
+    <h1>The card rate is only <span>part of the cost.</span></h1>
+    <p class="lead">A bank or payment provider may offer a lower card rate, but it only supplies the card machines. Compare that, plus outside suppliers for the restaurant system, loyalty and marketing, with one RFM Loyalty quotation.</p>
+  </div>
+
+  <div class="grid">
+    <div class="col" id="inputs">
+      <section class="card" aria-labelledby="s1">
+        <h2 id="s1"><span class="num">1</span>Card sales</h2>
+        <div class="field">
+          <label class="label" for="sales">Card sales per month</label>
+          <div class="in-wrap">
+            <span class="affix affix-start" aria-hidden="true">AED</span>
+            <input id="sales" class="input input-lg pad-start" inputmode="numeric" autocomplete="off">
+          </div>
+          <p class="hint">Card payments only, not cash.</p>
+        </div>
+        <div class="field">
+          <label class="label" for="name">Restaurant name <em>(optional)</em></label>
+          <input id="name" class="input" autocomplete="off" maxlength="80">
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="s2">
+        <h2 id="s2"><span class="num">2</span>Payment device</h2>
+        <div class="count">
+          <span class="label" id="devices-label">Number of payment devices</span>
+          <div class="qty" role="group" aria-labelledby="devices-label">
+            <button type="button" class="step" data-q="devices" data-d="-1" aria-label="Fewer devices">−</button>
+            <span class="qty-val" id="devices-val"></span>
+            <button type="button" class="step" data-q="devices" data-d="1" aria-label="More devices">+</button>
+          </div>
+        </div>
+        <div class="pair pair-head" aria-hidden="true"><span>RFM Loyalty</span><span>Other provider</span></div>
+
+        <div class="line">
+          <div class="line-head">
+            <span class="label">Credit card rate (MDR)</span>
+            <p class="hint">MDR, the merchant discount rate, is the share of each card sale the provider keeps: at 1.95%, AED 1.95 of every AED 100. Before VAT.</p>
+          </div>
+          <div class="pair">
+            <div class="cell">
+              <label class="cap" for="rfm-rate">RFM rate<span class="sr">, credit cards, percent</span></label>
+              <div class="stepper">
+                <button type="button" class="step" data-rate="rfm" data-kind="credit" data-d="-0.05" aria-label="Lower RFM credit card rate">−</button>
+                <div class="in-wrap"><input id="rfm-rate" class="input input-center" inputmode="decimal" autocomplete="off"><span class="affix affix-end" aria-hidden="true">%</span></div>
+                <button type="button" class="step" data-rate="rfm" data-kind="credit" data-d="0.05" aria-label="Raise RFM credit card rate">+</button>
+              </div>
+            </div>
+            <div class="cell">
+              <label class="cap" for="ext-rate">Other provider rate<span class="sr">, credit cards, percent</span></label>
+              <div class="stepper">
+                <button type="button" class="step" data-rate="ext" data-kind="credit" data-d="-0.05" aria-label="Lower Other provider credit card rate">−</button>
+                <div class="in-wrap"><input id="ext-rate" class="input input-center" inputmode="decimal" autocomplete="off"><span class="affix affix-end" aria-hidden="true">%</span></div>
+                <button type="button" class="step" data-rate="ext" data-kind="credit" data-d="0.05" aria-label="Raise Other provider credit card rate">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="line">
+          <div class="line-head">
+            <span class="label">Debit card rate (MDR)</span>
+            <p class="hint">Many providers quote a lower rate for UAE debit cards. If the offer has one rate for all cards, enter it in both rows.</p>
+          </div>
+          <div class="pair">
+            <div class="cell">
+              <label class="cap" for="rfm-drate">RFM rate<span class="sr">, debit cards, percent</span></label>
+              <div class="stepper">
+                <button type="button" class="step" data-rate="rfm" data-kind="debit" data-d="-0.05" aria-label="Lower RFM debit card rate">−</button>
+                <div class="in-wrap"><input id="rfm-drate" class="input input-center" inputmode="decimal" autocomplete="off"><span class="affix affix-end" aria-hidden="true">%</span></div>
+                <button type="button" class="step" data-rate="rfm" data-kind="debit" data-d="0.05" aria-label="Raise RFM debit card rate">+</button>
+              </div>
+            </div>
+            <div class="cell">
+              <label class="cap" for="ext-drate">Other provider rate<span class="sr">, debit cards, percent</span></label>
+              <div class="stepper">
+                <button type="button" class="step" data-rate="ext" data-kind="debit" data-d="-0.05" aria-label="Lower Other provider debit card rate">−</button>
+                <div class="in-wrap"><input id="ext-drate" class="input input-center" inputmode="decimal" autocomplete="off"><span class="affix affix-end" aria-hidden="true">%</span></div>
+                <button type="button" class="step" data-rate="ext" data-kind="debit" data-d="0.05" aria-label="Raise Other provider debit card rate">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="line">
+          <div class="line-head">
+            <label class="label" for="dshare">Share of card sales paid by debit card</label>
+            <p class="hint">Used to weigh the two rates. It only matters when the debit and credit rates differ.</p>
+          </div>
+          <div class="in-wrap" style="max-width: 160px"><input id="dshare" class="input input-center" inputmode="decimal" autocomplete="off"><span class="affix affix-end" aria-hidden="true">%</span></div>
+        </div>
+
+        <div class="line" data-line="rent">
+          <div class="line-head">
+            <span class="label">Device rent <em>per device, per year</em></span>
+            <p class="hint">Banks often waive it. Published examples: e&amp; UTap from AED 64 a month, Mashreq up to AED 2,000 a year.</p>
+          </div>
+        </div>
+
+        <div class="line" data-line="app">
+          <div class="line-head">
+            <span class="label">Handheld point-of-sale app <em>per device, per month</em></span>
+            <p class="hint">Take orders and payment at the table. Till Go runs on RFM payment devices; other providers' devices cannot run it, so the restaurant would need a separate handheld licence.</p>
+          </div>
+        </div>
+
+        <div class="line" data-line="fees">
+          <div class="line-head">
+            <span class="label">Other yearly fees <em>(optional, total per year)</em></span>
+            <p class="hint">Setup fee, minimum monthly billing (a fee when card sales fall below a set amount), statement or PCI security fees. Example: setup up to AED 3,000 at Mashreq.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card box" id="box-pos" aria-labelledby="s3">
+        <div class="box-head">
+          <h2 id="s3"><span class="num">3</span>Restaurant management</h2>
+          <label class="incl"><input type="checkbox" id="on-pos"> Include</label>
+        </div>
+        <p class="sub">Orders, menu, kitchen screens and reports. With RFM this is Till.</p>
+        <div class="pair pair-head" aria-hidden="true"><span>RFM Loyalty</span><span>Outside supplier</span></div>
+        <div class="line" data-line="pos">
+          <div class="line-head"><span class="label">Restaurant system <em>per month</em></span>
+            <p class="hint">Full-featured plans with all modules: Foodics Advanced AED 556 a month, Syrve top tier AED 450 a month per till. Hardware is extra.</p></div>
+        </div>
+      </section>
+
+      <section class="card box" id="box-loyalty" aria-labelledby="s4">
+        <div class="box-head">
+          <h2 id="s4"><span class="num">4</span>Loyalty solution</h2>
+          <label class="incl"><input type="checkbox" id="on-loyalty"> Include</label>
+        </div>
+        <p class="sub">Points, rewards and offers that bring customers back.</p>
+        <div class="pair pair-head" aria-hidden="true"><span>RFM Loyalty</span><span>Outside supplier</span></div>
+        <div class="line" data-line="loyalty">
+          <div class="line-head"><span class="label">Loyalty programme <em>per month</em></span>
+            <p class="hint">Full loyalty plans run to about AED 385 a month per location (Square Loyalty top tier).</p></div>
+        </div>
+      </section>
+
+      <section class="card box" id="box-oohup" aria-labelledby="s5">
+        <div class="box-head">
+          <h2 id="s5"><span class="num">5</span>Marketing and in-store outreach</h2>
+          <label class="incl"><input type="checkbox" id="on-oohup"> Include</label>
+        </div>
+        <p class="sub">OOHUP digital screens in the restaurant, with the CMS platform to run your menu, offers and campaigns. <span class="tag">Only from RFM</span></p>
+        <div class="count">
+          <span class="label" id="screens-label">Number of screens</span>
+          <div class="qty" role="group" aria-labelledby="screens-label">
+            <button type="button" class="step" data-q="screens" data-d="-1" aria-label="Fewer screens">−</button>
+            <span class="qty-val" id="screens-val"></span>
+            <button type="button" class="step" data-q="screens" data-d="1" aria-label="More screens">+</button>
+          </div>
+        </div>
+        <div class="pair pair-head" aria-hidden="true"><span>RFM Loyalty</span><span>Outside supplier</span></div>
+        <div class="line" data-line="oohup">
+          <div class="line-head"><span class="label">OOHUP screens and CMS <em>per screen, per month</em></span></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="col col-results" aria-live="polite">
+      <section class="card" aria-labelledby="r1">
+        <h2 id="r1">The rate difference</h2>
+        <div id="rate-out"></div>
+      </section>
+      <section class="card" aria-labelledby="r2">
+        <h2 id="r2">Total cost per year</h2>
+        <div class="bars">
+          <div>
+            <div class="bar-label"><span>Other provider + outside suppliers</span><strong id="t-their"></strong></div>
+            <div class="track"><span class="seg seg-fee" id="b-fee"></span><span class="seg seg-extra" id="b-extra"></span></div>
+          </div>
+          <div>
+            <div class="bar-label"><span>RFM Loyalty</span><strong id="t-our"></strong></div>
+            <div class="track"><span class="seg seg-ours" id="b-ours"></span><span class="seg seg-rfm" id="b-rfm"></span></div>
+          </div>
+          <ul class="legend">
+            <li><i class="seg-fee"></i>Card fees</li>
+            <li><i class="seg-extra"></i>Rent, fees and outside suppliers</li>
+            <li><i class="seg-ours"></i>RFM card fees</li>
+            <li><i class="seg-rfm"></i>RFM rent, fees and products</li>
+          </ul>
+        </div>
+        <table>
+          <thead><tr><th scope="col"><span class="sr">Cost</span></th><th scope="col">Other provider + outside suppliers</th><th scope="col">RFM Loyalty</th></tr></thead>
+          <tbody id="rows"></tbody>
+          <tfoot><tr><th scope="row">Total per year</th><td id="f-their"></td><td id="f-our"></td></tr></tfoot>
+        </table>
+      </section>
+      <section class="verdict" id="verdict" aria-labelledby="r3">
+        <h2 id="r3"></h2>
+        <div id="v-body"></div>
+      </section>
+    </div>
+  </div>
+
+  <p class="foot">An estimate, not a quote. Card fees are monthly card sales × rate × 12, with the credit and debit rates weighed by the debit share. All prices are before VAT; 5% VAT applies to provider fees, including the MDR, on both sides. Outside supplier prices are published benchmarks and can be changed above; actual quotes will vary.</p>
+  <details class="sources">
+    <summary>Where these benchmarks come from</summary>
+    <ul>
+      <li>Card rates: Mashreq NEOPAY (NEO BIZ) lists 1.97% for UAE cards and 2.70% for international cards; Mashreq's tariff goes up to 3.00%. <a href="https://kredit.ae/business/neopay" target="_blank" rel="noopener">kredit.ae</a></li>
+      <li>Debit cards: since October 2024 the UAE Central Bank caps the issuer's share (interchange) on local debit cards at 0.75%, so debit-heavy restaurants may be quoted lower rates. <a href="https://www.adyen.com/en_AE/knowledge-hub/uae-regulation-changes-to-irf" target="_blank" rel="noopener">Adyen</a></li>
+      <li>Device rent: e&amp; UTap from AED 64.05 a month; Mashreq up to AED 1,000 to 2,000 a year per device. <a href="https://www.etisalat.ae/utap.html" target="_blank" rel="noopener">e&amp;</a></li>
+      <li>Handheld app: Syrve Waiter, AED 50 per device per month. <a href="https://ae.syrve.com/apps/syrve-waiter" target="_blank" rel="noopener">Syrve</a></li>
+      <li>Restaurant system, full-featured tiers: Foodics Advanced AED 556 a month, Syrve up to AED 450 a month per till, Geidea up to AED 364 a month. <a href="https://geidea.net/ae/en/restaurant-point-of-sale-pricing/" target="_blank" rel="noopener">Geidea</a>, <a href="https://www.foodics.com/foodics-pricing-uae/" target="_blank" rel="noopener">Foodics</a></li>
+      <li>Loyalty: Square Loyalty top tier USD 105 (AED 385) per location a month. <a href="https://square.com/us/en/software/loyalty" target="_blank" rel="noopener">Square</a></li>
+      <li>Screens: no outside supplier offers in-venue screens like OOHUP. Do-it-yourself screen software such as Yodeck starts at USD 8 (AED 29) per screen a month, screen not included. <a href="https://www.yodeck.com/docs/user-manual/2026-yodeck-pricing-update/" target="_blank" rel="noopener">Yodeck</a></li>
+      <li>Also ask the other provider about settlement time (T+1 means the money arrives the next working day) and chargeback fees. Prices ex VAT, USD at AED 3.6725, from published pages and listings, November 2026.</li>
+    </ul>
+  </details>
+</div>
+
+<div class="sticky" aria-hidden="true"><span id="st-label"></span><strong id="st-num"></strong></div>
+
+<script>
+(function () {
+  // Cost lines below the card rate. per: which count multiplies the price; months: 12 for monthly prices, 1 for yearly.
+  // box: the optional box that switches the line on or off. rfmOnly: no outside equivalent, adds nothing to the other route.
+  var LINES = [
+    { id: 'rent', name: 'Device rent', per: 'devices', months: 1, unit: 'AED / year', rfmCap: 'Rent', extCap: 'Rent', zero: 'Included' },
+    { id: 'app', name: 'Handheld app', per: 'devices', months: 12, unit: 'AED / month', rfmCap: 'Till Go', extCap: 'Outside licence', zero: 'Included' },
+    { id: 'fees', name: 'Other yearly fees', months: 1, unit: 'AED / year', rfmCap: 'Fees', extCap: 'Fees', zero: 'None', hideZero: true },
+    { id: 'pos', name: 'Restaurant management', box: 'pos', months: 12, unit: 'AED / month', rfmCap: 'Till', extCap: 'Outside system', zero: 'Included' },
+    { id: 'loyalty', name: 'Loyalty programme', box: 'loyalty', months: 12, unit: 'AED / month', rfmCap: 'RFM Loyalty programme', extCap: 'Outside loyalty', zero: 'Included' },
+    { id: 'oohup', name: 'OOHUP screens and CMS', box: 'oohup', per: 'screens', months: 12, unit: 'AED / month', rfmCap: 'OOHUP', zero: 'Included', rfmOnly: true }
+  ];
+  // RFM prices default to 0 (included) until the rep enters the quotation. Outside defaults for the restaurant system and loyalty are full-featured tiers (Till includes all modules); the rest are published
+  // UAE benchmarks found (see "Where these benchmarks come from"); bank device rent defaults to 0 because it is often waived.
+  var DEFAULTS = {
+    sales: 50000, rate: { rfm: 1.95, ext: 1.75 }, drate: { rfm: 1.95, ext: 1.75 }, dshare: 50, devices: 2, screens: 1,
+    on: { pos: true, loyalty: true, oohup: true },
+    price: { rent: { rfm: 0, ext: 0 }, app: { rfm: 0, ext: 50 }, fees: { rfm: 0, ext: 0 }, pos: { rfm: 0, ext: 556 }, loyalty: { rfm: 0, ext: 385 }, oohup: { rfm: 0, ext: 0 } }
+  };
+  var KEY = 'dealCalculator.v6';
+  var $ = function (id) { return document.getElementById(id); };
+  var num = function (s) { var n = Number(String(s).replace(/,/g, '')); return isFinite(n) && n >= 0 ? n : 0; };
+  var aed = function (v, d) { return 'AED ' + Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }); };
+  var pct = function (v) { return Math.abs(v).toLocaleString('en-US', { maximumFractionDigits: 2 }) + '%'; };
+  var cleanDec = function (raw) { var s = raw.replace(/[^\d.]/g, ''), i = s.indexOf('.'); return i < 0 ? s : s.slice(0, i + 1) + s.slice(i + 1).replace(/\./g, ''); };
+  var cleanAmt = function (raw) { var d = String(raw).replace(/\D/g, '').replace(/^0+(?=\d)/, '').slice(0, 10); return d ? Number(d).toLocaleString('en-US') : ''; };
+  var copy = function (o) { return JSON.parse(JSON.stringify(o)); };
+
+  function fresh() {
+    var s = copy(DEFAULTS);
+    try {
+      var saved = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if (saved) {
+        if (saved.rfmRate > 0) s.rate.rfm = saved.rfmRate;
+        if (saved.rfmDrate > 0) s.drate.rfm = saved.rfmDrate;
+        LINES.forEach(function (l) {
+          var p = saved.price && saved.price[l.id]; if (!p) return;
+          ['rfm', 'ext'].forEach(function (k) { if (typeof p[k] === 'number' && p[k] >= 0) s.price[l.id][k] = p[k]; });
+        });
+      }
+    } catch (e) {}
+    return s;
+  }
+  var state = fresh();
+
+  // Build the two input cells of each line once; render() only updates values.
+  function moneyCell(l, k, cap) {
+    var id = k + '-' + l.id, who = k === 'rfm' ? 'RFM Loyalty' : 'Other side';
+    return '<div class="cell"><label class="cap" for="' + id + '">' + cap + '<span class="sr">, ' + who + ', ' + l.name + ', ' + l.unit + '</span></label>' +
+      '<div class="in-wrap"><span class="affix affix-start" aria-hidden="true">AED</span>' +
+      '<input id="' + id + '" data-line="' + l.id + '" data-k="' + k + '" class="input pad-start" inputmode="decimal" autocomplete="off"></div></div>';
+  }
+  LINES.forEach(function (l) {
+    var host = document.querySelector('.line[data-line="' + l.id + '"]');
+    host.insertAdjacentHTML('beforeend', '<div class="pair">' + moneyCell(l, 'rfm', l.rfmCap) +
+      (l.rfmOnly ? '<div class="cell"><span class="cap">Outside supplier</span><span class="na" id="na-' + l.id + '">Not available</span></div>' : moneyCell(l, 'ext', l.extCap)) + '</div>');
+  });
+
+  function fill() {
+    $('sales').value = cleanAmt(state.sales);
+    $('rfm-rate').value = state.rate.rfm; $('ext-rate').value = state.rate.ext;
+    $('rfm-drate').value = state.drate.rfm; $('ext-drate').value = state.drate.ext; $('dshare').value = state.dshare;
+    ['pos', 'loyalty', 'oohup'].forEach(function (b) { $('on-' + b).checked = state.on[b]; });
+    LINES.forEach(function (l) { $('rfm-' + l.id).value = state.price[l.id].rfm; if (!l.rfmOnly) $('ext-' + l.id).value = state.price[l.id].ext; });
+  }
+
+  function compute() {
+    // Effective rate per side: credit and debit rates weighed by the debit share of card sales.
+    var d = Math.min(100, state.dshare) / 100, eff = function (k) { return state.rate[k] * (1 - d) + state.drate[k] * d; };
+    var gap = Math.round((eff('rfm') - eff('ext')) * 1e6) / 1e6, r = { gap: gap, effRfm: eff('rfm'), effExt: eff('ext') };
+    r.split = state.rate.rfm !== state.drate.rfm || state.rate.ext !== state.drate.ext;
+    r.theirFees = state.sales * r.effExt / 100 * 12; r.ourFees = state.sales * r.effRfm / 100 * 12;
+    r.extraM = state.sales * gap / 100; r.extraY = r.extraM * 12;
+    r.lines = LINES.map(function (l) {
+      var on = !l.box || state.on[l.box], q = l.per ? state[l.per] : 1, p = state.price[l.id];
+      return { l: l, on: on, qty: q, rfmY: on ? q * p.rfm * l.months : 0, extY: on && !l.rfmOnly ? q * p.ext * l.months : 0 };
+    });
+    r.rfmY = r.lines.reduce(function (a, x) { return a + x.rfmY; }, 0);
+    r.extY = r.lines.reduce(function (a, x) { return a + x.extY; }, 0);
+    r.theirTotal = r.theirFees + r.extY; r.ourTotal = r.ourFees + r.rfmY; r.net = r.theirTotal - r.ourTotal;
+    var saveM = (r.extY - r.rfmY) / 12;
+    r.breakEven = gap > 0 && saveM > 0 ? saveM * 100 / gap : null;
+    return r;
+  }
+
+  function visible(x) { return x.on && !(x.l.hideZero && x.rfmY === 0 && x.extY === 0); }
+  function rowName(x) { return x.l.name + (x.l.per && x.qty > 1 ? ' × ' + x.qty : ''); }
+
+  var last;
+  function render() {
+    var r = last = compute(), more = r.gap > 0, ahead = r.net > 0.005, even = Math.abs(r.net) < 0.005;
+    var name = $('name').value.trim();
+    $('eyebrow').textContent = 'Cost comparison' + (name ? ' for ' + name : '');
+
+    $('rate-out').innerHTML = more
+      ? '<p class="big">' + aed(r.extraM) + ' <span>more per month</span></p><p class="working">' + (r.split ? 'Weighted by card mix: ' : '') + pct(r.effRfm) + ' − ' + pct(r.effExt) + ' = ' + r.gap.toFixed(2) + '% of ' + aed(state.sales) + ' card sales</p>' +
+        '<dl class="facts"><div><dt>Per year</dt><dd>' + aed(r.extraY) + '</dd></div><div><dt>Per day</dt><dd>' + aed(r.extraY / 365, 2) + '</dd></div><div><dt>On a AED 100 bill</dt><dd>' + aed(r.gap, 2) + '</dd></div></dl>'
+      : r.gap === 0
+        ? '<p class="big good">No difference</p><p class="working">Both rates are ' + pct(r.effRfm) + '.</p>'
+        : '<p class="big good">' + aed(r.extraM) + ' <span>less per month</span></p><p class="working">The RFM Loyalty rate is lower by ' + pct(r.gap) + ', a saving of ' + aed(r.extraY) + ' a year on card fees.</p>';
+
+    ['devices', 'screens'].forEach(function (k) {
+      $(k + '-val').textContent = state[k];
+      document.querySelector('[data-q="' + k + '"][data-d="-1"]').disabled = state[k] <= 1;
+    });
+    ['pos', 'loyalty', 'oohup'].forEach(function (b) {
+      var on = state.on[b]; $('box-' + b).classList.toggle('off', !on);
+      $('box-' + b).querySelectorAll('.line input, .qty .step').forEach(function (el) { if (!el.dataset.q) el.disabled = !on; });
+      if (b === 'oohup') document.querySelectorAll('[data-q="screens"]').forEach(function (el) { el.disabled = !on || (el.dataset.d === '-1' && state.screens <= 1); });
+    });
+
+    var max = Math.max(r.theirTotal, r.ourTotal, 1), w = function (v) { return Math.max(0, v / max * 100) + '%'; };
+    $('b-fee').style.width = w(r.theirFees); $('b-extra').style.width = w(r.extY);
+    $('b-ours').style.width = w(r.ourFees); $('b-rfm').style.width = w(r.rfmY);
+    $('t-their').textContent = $('f-their').textContent = aed(r.theirTotal);
+    $('t-our').textContent = $('f-our').textContent = aed(r.ourTotal);
+    $('rows').innerHTML = '<tr><th scope="row">Card fees (MDR)</th><td>' + aed(r.theirFees) + '</td><td>' + aed(r.ourFees) + '</td></tr>' +
+      r.lines.filter(visible).map(function (x) {
+        var ext = x.l.rfmOnly ? '<td class="dim">Not available</td>' : x.extY > 0 ? '<td>' + aed(x.extY) + '</td>' : '<td class="dim">' + (x.l.zero === 'None' ? 'None' : 'AED 0') + '</td>';
+        var rfm = x.rfmY > 0 ? '<td>' + aed(x.rfmY) + '</td>' : '<td class="' + (x.l.zero === 'None' ? 'dim' : 'inc') + '">' + x.l.zero + '</td>';
+        return '<tr><th scope="row">' + rowName(x) + '</th>' + ext + rfm + '</tr>';
+      }).join('');
+
+    $('verdict').classList.toggle('is-good', ahead);
+    $('r3').textContent = ahead ? 'Better off with RFM Loyalty by' : even ? 'Both options cost the same' : 'On these numbers, the other route costs less by';
+    var body = even ? '' : '<p class="v-num">' + aed(r.net) + ' <span>a year</span></p>';
+    if (ahead && more) {
+      body += '<p class="v-note">The higher card rate costs ' + aed(r.extraY) + ' a year. Device rent, fees and outside suppliers would cost ' + aed(r.extY) + ' a year, against ' +
+        (r.rfmY > 0 ? aed(r.rfmY) : 'nothing extra') + ' with RFM Loyalty.</p>';
+      if (r.breakEven) body += '<p class="v-note">The lower rate only works out cheaper above ' + aed(r.breakEven) + ' in card sales a month.</p>';
+    } else if (!ahead && !even) {
+      body += '<p class="v-note">Check that each box includes what the restaurant would actually use, and enter the outside prices it has been quoted.</p>';
+    }
+    $('v-body').innerHTML = body;
+    $('st-label').textContent = ahead ? 'Better off by' : even ? 'Same cost' : 'Other route cheaper by';
+    $('st-num').textContent = even ? '' : aed(r.net) + ' / year';
+    $('st-num').classList.toggle('good', ahead);
+
+    try { localStorage.setItem(KEY, JSON.stringify({ rfmRate: state.rate.rfm, rfmDrate: state.drate.rfm, price: state.price })); } catch (e) {}
+  }
+
+  $('name').addEventListener('input', render);
+  $('sales').addEventListener('input', function (e) { e.target.value = cleanAmt(e.target.value); state.sales = num(e.target.value); render(); });
+  ['rfm', 'ext'].forEach(function (k) {
+    $(k + '-rate').addEventListener('input', function (e) { e.target.value = cleanDec(e.target.value); state.rate[k] = num(e.target.value); render(); });
+    $(k + '-drate').addEventListener('input', function (e) { e.target.value = cleanDec(e.target.value); state.drate[k] = num(e.target.value); render(); });
+  });
+  $('dshare').addEventListener('input', function (e) { e.target.value = cleanDec(e.target.value); state.dshare = Math.min(100, num(e.target.value)); render(); });
+  document.querySelectorAll('[data-rate]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var k = b.dataset.rate, deb = b.dataset.kind === 'debit', o = deb ? state.drate : state.rate;
+      o[k] = Math.max(0, Math.round((o[k] + Number(b.dataset.d)) * 100) / 100); $(k + (deb ? '-drate' : '-rate')).value = o[k]; render();
+    });
+  });
+  document.querySelectorAll('[data-q]').forEach(function (b) {
+    b.addEventListener('click', function () { var k = b.dataset.q; state[k] = Math.min(99, Math.max(1, state[k] + Number(b.dataset.d))); render(); });
+  });
+  $('inputs').addEventListener('input', function (e) {
+    var t = e.target;
+    if (t.type === 'checkbox' && t.id.indexOf('on-') === 0) { state.on[t.id.slice(3)] = t.checked; render(); return; }
+    if (!t.dataset.line) return;
+    t.value = cleanDec(t.value); state.price[t.dataset.line][t.dataset.k] = num(t.value); render();
+  });
+  $('reset').addEventListener('click', function () {
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    state = copy(DEFAULTS); $('name').value = ''; fill(); render();
+  });
+  $('copy').addEventListener('click', function () {
+    var r = last, name = $('name').value.trim(), L = [];
+    L.push('Cost comparison' + (name ? ' for ' + name : ''));
+    L.push('Card sales: ' + aed(state.sales) + ' a month, ' + state.devices + ' payment device' + (state.devices === 1 ? '' : 's'));
+    L.push('Credit card rate (MDR): RFM Loyalty ' + pct(state.rate.rfm) + ' | Other provider ' + pct(state.rate.ext));
+    L.push('Debit card rate (MDR): RFM Loyalty ' + pct(state.drate.rfm) + ' | Other provider ' + pct(state.drate.ext) + ' (' + pct(state.dshare) + ' of card sales on debit)');
+    L.push(r.gap > 0 ? 'Rate difference: ' + aed(r.extraM) + ' a month (' + aed(r.extraY) + ' a year)' : 'Rate difference: none or in your favour');
+    L.push(''); L.push('Per year, other provider + outside suppliers vs RFM Loyalty:');
+    L.push('- Card fees: ' + aed(r.theirFees) + ' vs ' + aed(r.ourFees));
+    r.lines.filter(visible).forEach(function (x) {
+      L.push('- ' + rowName(x).replace('×', 'x') + ': ' + (x.l.rfmOnly ? 'not available' : aed(x.extY)) + ' vs ' + (x.rfmY > 0 ? aed(x.rfmY) : x.l.zero.toLowerCase()));
+    });
+    L.push(''); L.push('Total per year, other provider + outside suppliers: ' + aed(r.theirTotal));
+    L.push('Total per year, RFM Loyalty: ' + aed(r.ourTotal));
+    L.push(r.net > 0.005 ? 'Better off with RFM Loyalty by ' + aed(r.net) + ' a year.' : r.net < -0.005 ? 'The other route costs less by ' + aed(r.net) + ' a year.' : 'Both cost the same.');
+    L.push('An estimate, not a quote. Prices before VAT.');
+    var btn = $('copy'), done = function (t) { btn.textContent = t; setTimeout(function () { btn.textContent = 'Copy summary'; }, 1800); };
+    try { navigator.clipboard.writeText(L.join('\n')).then(function () { done('Copied'); }, function () { done('Copy not available'); }); }
+    catch (e) { done('Copy not available'); }
+  });
+
+  fill(); render();
+})();
+</script>
+</body>
+</html>
