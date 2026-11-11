@@ -176,7 +176,7 @@ tfoot th, tfoot td { border-top: 2px solid var(--ink); font-weight: 800; font-si
 .art img { display: block; width: 100%; height: 150px; border-radius: 12px; border: 1px solid var(--line); background: var(--art-bg); }
 .art .fit { object-fit: contain; padding: 8px; }
 .art .fill { object-fit: cover; object-position: top left; }
-.art figcaption { margin-top: 4px; font-size: 12px; color: var(--faint); }
+.art figcaption { margin-top: 4px; font-size: 12px; line-height: 1.5; color: var(--faint); }
 .with-art { display: flex; align-items: center; gap: 14px; }
 .with-art > div { flex: 1; min-width: 0; }
 .with-art img { flex: none; height: 132px; width: auto; }
@@ -400,7 +400,11 @@ tfoot th, tfoot td { border-top: 2px solid var(--ink); font-weight: 800; font-si
           <h2 id="s5"><span class="num">5</span>Marketing and in-store outreach</h2>
           <label class="incl"><input type="checkbox" id="on-oohup"> Include</label>
         </div>
-        <p class="sub">OOHUP digital screens in the restaurant, with the CMS platform to run your menu, offers and campaigns. <span class="tag">Only from RFM</span></p>
+        <p class="sub">OOHUP digital screens in the restaurant, with the CMS platform to run your menu, offers and campaigns, plus 15 influencers through Following.</p>
+        <div class="art art-2">
+          <figure><img class="fill" style="object-position: center" src="/deal-calculator/oohup.webp" width="640" height="431" loading="lazy" alt="Two OOHUP digital screens on a restaurant wall"><figcaption>OOHUP screens <span class="tag">Only from RFM</span></figcaption></figure>
+          <figure><img class="fit" src="/deal-calculator/following.webp" width="520" height="311" loading="lazy" alt="RFM card machine showing Tap to Pay"><figcaption>15 influencers free with the card machine</figcaption></figure>
+        </div>
         <div class="count">
           <span class="label" id="screens-label">Number of screens</span>
           <div class="qty" role="group" aria-labelledby="screens-label">
@@ -412,6 +416,10 @@ tfoot th, tfoot td { border-top: 2px solid var(--ink); font-weight: 800; font-si
         <div class="pair pair-head" aria-hidden="true"><span>RFM Loyalty</span><span>Outside supplier</span></div>
         <div class="line" data-line="oohup">
           <div class="line-head"><span class="label">OOHUP screens and CMS <em>per screen, per month</em></span></div>
+        </div>
+        <div class="line" data-line="infl">
+          <div class="line-head"><span class="label">15 influencers <em>total, first 3 months</em></span>
+            <p class="hint">Following sends five influencers a month for three months, chosen for the type of business, at no fee with the RFM card machine. Enter what an agency would charge for the same 15.</p></div>
         </div>
       </section>
     </div>
@@ -480,14 +488,16 @@ tfoot th, tfoot td { border-top: 2px solid var(--ink); font-weight: 800; font-si
     { id: 'fees', name: 'Other yearly fees', months: 1, unit: 'AED / year', rfmCap: 'Fees', extCap: 'Fees', zero: 'None', hideZero: true },
     { id: 'pos', name: 'Restaurant management', box: 'pos', months: 12, unit: 'AED / month', rfmCap: 'Till', extCap: 'Outside system', zero: 'Included' },
     { id: 'loyalty', name: 'Loyalty programme', box: 'loyalty', months: 12, unit: 'AED / month', rfmCap: 'RFM Loyalty programme', extCap: 'Outside loyalty', zero: 'Included' },
-    { id: 'oohup', name: 'OOHUP screens and CMS', box: 'oohup', per: 'screens', months: 12, unit: 'AED / month', rfmCap: 'OOHUP', zero: 'Included', rfmOnly: true }
+    { id: 'oohup', name: 'OOHUP screens and CMS', box: 'oohup', per: 'screens', months: 12, unit: 'AED / month', rfmCap: 'OOHUP', zero: 'Included', rfmOnly: true },
+    // One-off: 15 influencers over the first three months (the Following offer). No outside benchmark, so it starts unpriced.
+    { id: 'infl', name: '15 influencers (Following)', box: 'oohup', months: 1, unit: 'AED total', rfmCap: 'With RFM', extCap: 'Outside agency', zero: 'Included', extZero: 'Not priced' }
   ];
   // RFM prices default to 0 (included) until the rep enters the quotation. Outside defaults for the restaurant system and loyalty are full-featured tiers (Till includes all modules); the rest are published
   // UAE benchmarks found (see "Where these benchmarks come from"); bank device rent defaults to 0 because it is often waived.
   var DEFAULTS = {
     sales: 50000, rate: { rfm: 1.95, ext: 1.75 }, drate: { rfm: 1.95, ext: 1.75 }, dshare: 50, devices: 2, screens: 1,
     on: { pos: true, loyalty: true, oohup: true },
-    price: { rent: { rfm: 0, ext: 0 }, app: { rfm: 0, ext: 50 }, fees: { rfm: 0, ext: 0 }, pos: { rfm: 0, ext: 556 }, loyalty: { rfm: 0, ext: 385 }, oohup: { rfm: 0, ext: 0 } }
+    price: { rent: { rfm: 0, ext: 0 }, app: { rfm: 0, ext: 50 }, fees: { rfm: 0, ext: 0 }, pos: { rfm: 0, ext: 556 }, loyalty: { rfm: 0, ext: 385 }, oohup: { rfm: 0, ext: 0 }, infl: { rfm: 0, ext: 0 } }
   };
   var KEY = 'dealCalculator.v6';
   var $ = function (id) { return document.getElementById(id); };
@@ -588,7 +598,7 @@ tfoot th, tfoot td { border-top: 2px solid var(--ink); font-weight: 800; font-si
     $('t-our').textContent = $('f-our').textContent = aed(r.ourTotal);
     $('rows').innerHTML = '<tr><th scope="row">Card fees (MDR)</th><td>' + aed(r.theirFees) + '</td><td>' + aed(r.ourFees) + '</td></tr>' +
       r.lines.filter(visible).map(function (x) {
-        var ext = x.l.rfmOnly ? '<td class="dim">Not available</td>' : x.extY > 0 ? '<td>' + aed(x.extY) + '</td>' : '<td class="dim">' + (x.l.zero === 'None' ? 'None' : 'AED 0') + '</td>';
+        var ext = x.l.rfmOnly ? '<td class="dim">Not available</td>' : x.extY > 0 ? '<td>' + aed(x.extY) + '</td>' : '<td class="dim">' + (x.l.extZero || (x.l.zero === 'None' ? 'None' : 'AED 0')) + '</td>';
         var rfm = x.rfmY > 0 ? '<td>' + aed(x.rfmY) + '</td>' : '<td class="' + (x.l.zero === 'None' ? 'dim' : 'inc') + '">' + x.l.zero + '</td>';
         return '<tr><th scope="row">' + rowName(x) + '</th>' + ext + rfm + '</tr>';
       }).join('');
@@ -654,7 +664,7 @@ tfoot th, tfoot td { border-top: 2px solid var(--ink); font-weight: 800; font-si
     L.push(''); L.push('Per year, other provider + outside suppliers vs RFM Loyalty:');
     L.push('- Card fees: ' + aed(r.theirFees) + ' vs ' + aed(r.ourFees));
     r.lines.filter(visible).forEach(function (x) {
-      L.push('- ' + rowName(x).replace('×', 'x') + ': ' + (x.l.rfmOnly ? 'not available' : aed(x.extY)) + ' vs ' + (x.rfmY > 0 ? aed(x.rfmY) : x.l.zero.toLowerCase()));
+      L.push('- ' + rowName(x).replace('×', 'x') + ': ' + (x.l.rfmOnly ? 'not available' : x.extY > 0 || !x.l.extZero ? aed(x.extY) : x.l.extZero.toLowerCase()) + ' vs ' + (x.rfmY > 0 ? aed(x.rfmY) : x.l.zero.toLowerCase()));
     });
     L.push(''); L.push('Total per year, other provider + outside suppliers: ' + aed(r.theirTotal));
     L.push('Total per year, RFM Loyalty: ' + aed(r.ourTotal));
