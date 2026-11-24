@@ -109,6 +109,7 @@ export default function Navigation() {
     { name: 'Integrations', href: '/integrations' },
     { name: 'Pricing', href: '/pricing' },
     { name: 'Knowledge Base', href: '/knowledge-base' },
+    { name: 'Academy', href: '/academy' },
     { name: 'Contact', href: '/contact' },
   ]
 
@@ -163,7 +164,7 @@ export default function Navigation() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-5 xl:gap-8">
             {navLinks.map((link) => {
               const isDropdownOpen = link.name === 'Products' ? productsDropdownOpen :
                                      link.name === 'Features' ? featuresDropdownOpen : false
@@ -179,7 +180,7 @@ export default function Navigation() {
                 >
                   <Link href={link.href}>
                     <motion.span
-                      className={`${isScrolled ? 'text-navy' : 'text-white'} hover:text-coral transition-colors duration-300 text-sm cursor-pointer`}
+                      className={`${isScrolled ? 'text-navy' : 'text-white'} hover:text-coral transition-colors duration-300 text-sm cursor-pointer lg:whitespace-nowrap`}
                       whileHover={{ y: -2 }}
                     >
                       {link.name}

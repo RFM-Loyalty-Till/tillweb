@@ -9,7 +9,7 @@ export default function Footer() {
   const footerLinks = {
     Product: ['Features', 'Pricing', 'Industries', 'Integrations'],
     Company: ['About', 'Careers', 'Blog', 'Press'],
-    Resources: ['Documentation', 'Help Center', 'API Reference', 'Community'],
+    Resources: ['Documentation', 'Help Center', 'Academy', 'API Reference', 'Community'],
     Legal: ['Privacy Policy', 'Terms of Service', 'Security']
   }
 
@@ -73,7 +73,7 @@ export default function Footer() {
                   {links.map((link) => (
                     <li key={link}>
                       <a
-                        href="#"
+                        href={link === 'Academy' ? '/academy' : '#'}
                         className="text-white/60 hover:text-coral transition-colors text-sm"
                       >
                         {link}
