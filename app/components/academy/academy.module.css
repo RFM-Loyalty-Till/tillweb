@@ -192,7 +192,7 @@
 .rowLink:focus-visible { outline: none; }
 .rowLink:focus-visible::after { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 0.375rem; }
 .rowSummary { display: none; margin-top: 0.25rem !important; max-width: 34rem; font-size: 0.9375rem; line-height: 1.5; color: var(--muted); text-wrap: pretty; }
-.row .rowWhy { position: relative; z-index: 1; display: flex; align-items: center; min-height: 2.75rem; margin: -0.5rem 0 -0.8125rem; font-size: 0.8125rem; color: var(--muted); }
+.row .rowWhy { position: relative; z-index: 1; display: flex; align-items: center; min-height: 2.75rem; margin: -0.5rem 0 -0.625rem; font-size: 0.8125rem; color: var(--muted); }
 .rowWhy a { display: inline-block; padding: 0.75rem 0; line-height: 1.3; color: var(--accent-ink); text-underline-offset: 3px; }
 .rowMeta { grid-area: meta; font-size: 0.8125rem; line-height: 1.4; color: var(--muted); }
 .rowMeta > span + span::before { content: '·'; margin: 0 0.375rem; color: var(--line-strong); }
