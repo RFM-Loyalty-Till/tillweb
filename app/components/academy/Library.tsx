@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Search, X } from 'lucide-react'
+import { Search, SlidersHorizontal, X } from 'lucide-react'
 import {
   LEVEL_ORDER,
   ROLE_ORDER,
@@ -49,6 +49,11 @@ export default function Library({
 }) {
   const [filters, setFilters] = useState<LibraryFilters>(initialFilters)
   const [copy, setCopy] = useState<CopyState>('idle')
+  // Phones keep the four pickers behind one button so the list starts on the first screen.
+  const [pickersOpen, setPickersOpen] = useState(
+    () => Boolean(initialFilters.topic || initialFilters.role || initialFilters.level || initialFilters.show)
+  )
+  const pickerCount = [filters.topic, filters.role, filters.level, filters.show].filter(Boolean).length
   const searchRef = useRef<HTMLInputElement>(null)
   const { ready, viewed: viewedSet } = useViewed()
   const viewed = ready ? viewedSet : null
@@ -125,6 +130,7 @@ export default function Library({
   return (
     <div className={s.lib}>
       <div className={s.rail}>
+        <div className={s.searchRow}>
         <form
           className={s.search}
           role="search"
@@ -175,9 +181,21 @@ export default function Library({
             </button>
           )}
         </form>
+          <button
+            type="button"
+            className={s.filterBtn}
+            aria-expanded={pickersOpen}
+            aria-controls="academy-pickers"
+            data-on={pickerCount > 0}
+            onClick={() => setPickersOpen((open) => !open)}
+          >
+            <SlidersHorizontal aria-hidden="true" size={18} />
+            <span>{pickerCount > 0 ? `Filters (${pickerCount})` : 'Filters'}</span>
+          </button>
+        </div>
 
         {/* Phones and tablets */}
-        <div className={s.selects}>
+        <div className={s.selects} id="academy-pickers" data-open={pickersOpen}>
           <select
             className={s.select}
             aria-label="Topic"
