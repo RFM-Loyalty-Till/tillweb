@@ -6,9 +6,12 @@ export type AcademyTopic =
   | 'payments'
   | 'tables'
   | 'order-management'
-  | 'back-office'
+  | 'menu'
+  | 'setup'
+  | 'kitchen-stock'
+  | 'reports'
 
-export type AcademyRole = 'cashier' | 'waiter' | 'manager' | 'owner'
+export type AcademyRole = 'cashier' | 'waiter' | 'kitchen' | 'manager' | 'owner'
 
 export type AcademyLevel = 'basics' | 'everyday' | 'advanced'
 

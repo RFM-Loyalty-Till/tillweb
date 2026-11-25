@@ -4,7 +4,10 @@ import { ordersGuides } from './orders'
 import { paymentsGuides } from './payments'
 import { tablesGuides } from './tables'
 import { orderManagementGuides } from './order-management'
-import { backOfficeGuides } from './back-office'
+import { menuGuides } from './menu'
+import { setupGuides } from './setup'
+import { kitchenStockGuides } from './kitchen-stock'
+import { reportsGuides } from './reports'
 
 /** All guides, ordered by topic (as in topics.ts) and then by `order`. */
 export const guides: AcademyGuide[] = [
@@ -13,5 +16,8 @@ export const guides: AcademyGuide[] = [
   ...paymentsGuides,
   ...tablesGuides,
   ...orderManagementGuides,
-  ...backOfficeGuides,
+  ...menuGuides,
+  ...setupGuides,
+  ...kitchenStockGuides,
+  ...reportsGuides,
 ]

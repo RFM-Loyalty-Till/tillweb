@@ -159,8 +159,83 @@ export const orderManagementGuides: AcademyGuide[] = [
         detail: 'The void cannot finish without a manager’s PIN. Leave the item on the order, tell the kitchen, and finish the void when a manager is back.',
       },
     ],
-    related: ['refund-an-order', 'add-items-to-open-table', 'find-an-order'],
+    related: ['void-a-whole-order', 'refund-an-order', 'add-items-to-open-table'],
     order: 2,
+    updated: '2026-11-24',
+  },
+  {
+    slug: 'void-a-whole-order',
+    title: 'Void a whole order',
+    summary: 'Cancel an entire order that was already sent, record what happens to the stock, and free the table.',
+    intro: [
+      'Void a whole order when none of it should be charged: guests who left before the food came, or an order rung up on the wrong table. The order is cancelled, its total becomes zero and the table is free again.',
+      'Till asks what happens to the stock. Choose Waste if the food was made, and Inventory Return if nothing was prepared and the stock can go back.',
+      'Every void needs a reason and a manager’s PIN. Voided orders are kept: you can find them in Order History and in the Voids report.',
+    ],
+    topic: 'order-management',
+    roles: ['waiter', 'cashier', 'manager'],
+    level: 'everyday',
+    tags: ['void', 'cancel', 'manager-pin', 'waste', 'stock', 'dine-in'],
+    video: { src: `${VIDEO_BASE}/void-a-whole-order.mp4`, poster: '/academy/posters/void-a-whole-order.jpg', seconds: 47.2 },
+    steps: [
+      {
+        title: 'Tap the table to reopen its order',
+        detail: 'Red tables have an open order. Here table 03.',
+        at: 2.6,
+      },
+      {
+        title: 'Tap Void',
+        detail: 'It is under the cart. It cancels the whole order.',
+        at: 6.8,
+      },
+      {
+        title: 'Say what happens to the stock',
+        detail: 'Waste if the food was made. Inventory Return if it was not.',
+        at: 11,
+      },
+      {
+        title: 'Pick a reason',
+        detail: 'Every void is saved with its reason.',
+        at: 15.2,
+      },
+      {
+        title: 'Tap Void & Return to Stock',
+        detail: 'The button name follows your stock choice.',
+        at: 19.4,
+      },
+      {
+        title: 'A manager enters their PIN',
+        detail: 'Voids need a manager to approve them.',
+        at: 23.6,
+      },
+      {
+        title: 'Open Orders in the left menu',
+        detail: 'This is where you see every order, including voided ones.',
+        at: 27.8,
+      },
+      {
+        title: 'Filter by Voided',
+        detail: 'In Order History, set the status filter to Voided.',
+        at: 32,
+      },
+      {
+        title: 'Here is the voided order',
+        detail: 'It shows the table, the items and a total of AED 0.00.',
+        at: 36.2,
+      },
+    ],
+    goodToKnow: [
+      {
+        title: 'Only one item wrong?',
+        detail: 'Void that item and keep the rest of the order. A whole-order void cancels everything on it.',
+      },
+      {
+        title: 'Already paid?',
+        detail: 'A paid order cannot be voided. Refund it instead.',
+      },
+    ],
+    related: ['void-an-item', 'refund-an-order', 'voids-and-refunds-report'],
+    order: 3,
     updated: '2026-11-24',
   },
   {
@@ -235,8 +310,83 @@ export const orderManagementGuides: AcademyGuide[] = [
         detail: 'A refunded order lists its refunds on the order details page, with amounts, reasons and times.',
       },
     ],
-    related: ['find-an-order', 'void-an-item', 'view-sales-report'],
-    order: 3,
+    related: ['partial-refund', 'find-an-order', 'voids-and-refunds-report'],
+    order: 4,
+    updated: '2026-11-24',
+  },
+  {
+    slug: 'partial-refund',
+    title: 'Refund one item',
+    summary: 'Give money back for part of a paid order: choose the items, how the money goes back and the reason.',
+    intro: [
+      'A partial refund returns the money for some items on a paid order and leaves the rest paid. Use it when one dish was wrong or sent back after the bill was settled.',
+      'You choose three things: which items (and how many of each), what happens to the stock (Restock if it came back unused, Waste if it was made), and how the money goes back (the original payment method, or cash).',
+      'Refunds need the refund permission, which managers and owners have. Each refunded item carries its own reason, which shows in the Refunds report.',
+    ],
+    topic: 'order-management',
+    roles: ['manager', 'owner'],
+    level: 'advanced',
+    tags: ['refund', 'partial-refund', 'money-back', 'complaint', 'restock', 'waste'],
+    video: { src: `${VIDEO_BASE}/partial-refund.mp4`, poster: '/academy/posters/partial-refund.jpg', seconds: 47.2 },
+    steps: [
+      {
+        title: 'Open the Orders page',
+        detail: 'Refunds start from the paid order. Managers and owners only.',
+        at: 2.6,
+      },
+      {
+        title: 'Show completed orders',
+        detail: 'Only a paid order can be refunded.',
+        at: 6.8,
+      },
+      {
+        title: 'Tap the order number',
+        detail: 'Find the order by number, time or total, then open it.',
+        at: 11,
+      },
+      {
+        title: 'Tap Partial Refund',
+        detail: 'Use it to give back some items, not the whole order.',
+        at: 15.2,
+      },
+      {
+        title: 'Tick the item to refund',
+        detail: 'Here the Chocolate Mousse. Use + and − to refund fewer of it.',
+        at: 19.4,
+      },
+      {
+        title: 'Restock or Waste?',
+        detail: 'Restock if it came back unused. Waste if it was made. Tap Waste.',
+        at: 23.6,
+      },
+      {
+        title: 'Choose how to pay it back',
+        detail: 'Original payment method, or Cash. Here: Cash.',
+        at: 27.8,
+      },
+      {
+        title: 'Type the reason',
+        detail: 'It shows in the Refunds report.',
+        at: 32,
+      },
+      {
+        title: 'Tap Refund 1 Item',
+        detail: 'The button shows how many items you are refunding.',
+        at: 36.2,
+      },
+    ],
+    goodToKnow: [
+      {
+        title: 'The reason box appears after you tick',
+        detail: 'Each item has its own reason. The box shows once the item is ticked.',
+      },
+      {
+        title: 'What the order looks like afterwards',
+        detail: 'The order total drops by the refunded amount and the item is marked Refunded. The other items stay paid.',
+      },
+    ],
+    related: ['refund-an-order', 'find-an-order', 'voids-and-refunds-report'],
+    order: 5,
     updated: '2026-11-24',
   },
 ]

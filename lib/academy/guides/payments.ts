@@ -157,8 +157,104 @@ export const paymentsGuides: AcademyGuide[] = [
         detail: 'The order details page shows every share separately, with how it was paid and the amount.',
       },
     ],
-    related: ['cash-and-card-split', 'print-the-bill', 'card-payment-with-tip'],
+    related: ['split-bill-by-items', 'cash-and-card-split', 'print-the-bill'],
     order: 2,
+    updated: '2026-11-24',
+  },
+  {
+    slug: 'split-bill-by-items',
+    title: 'Split a bill by items',
+    summary: 'Let each guest pay for exactly what they ordered: give every item to a person, then take each payment.',
+    intro: [
+      'Splitting by items is for a table where everyone pays for their own food. You name each person, tick the items they had, and Till works out each share, tax included.',
+      'Every item has to belong to someone before the split can be created. Add a person, tick their items, tap Add Person, and repeat until nothing is left.',
+      'Each share is then paid on its own, by cash or card. The receipt lists every share and how it was paid.',
+    ],
+    topic: 'payments',
+    roles: ['waiter', 'cashier'],
+    level: 'everyday',
+    tags: ['split', 'bill', 'cash', 'card', 'dine-in'],
+    video: { src: `${VIDEO_BASE}/split-bill-by-items.mp4`, poster: '/academy/posters/split-bill-by-items.jpg', seconds: 59.8 },
+    steps: [
+      {
+        title: 'Tap Pay',
+        detail: 'Two guests want to pay for their own items.',
+        at: 2.6,
+      },
+      {
+        title: 'Tap Split Between People',
+        detail: 'It is in the payment method list on the right.',
+        at: 6.8,
+      },
+      {
+        title: 'Tap Split by Items',
+        detail: 'You give each item to the person who ordered it.',
+        at: 11,
+      },
+      {
+        title: 'Name the first person',
+        detail: 'Type a name, for example Guest 1.',
+        at: 15.2,
+      },
+      {
+        title: 'Tick their items',
+        detail: 'Tap each item this person had. Here Banoffee Pie and Mousse.',
+        at: 19.4,
+      },
+      {
+        title: 'Tap Add Person',
+        detail: 'Guest 1 is saved with their items and share.',
+        at: 23.6,
+      },
+      {
+        title: 'Do the same for the next person',
+        detail: 'Name Guest 2, tick the other items, tap Add Person.',
+        at: 27.8,
+      },
+      {
+        title: 'Tap Create Split',
+        detail: 'Once every item is assigned, each person gets a share.',
+        at: 32,
+      },
+      {
+        title: 'Take the first payment',
+        detail: 'Guest 1 pays cash. Tap Cash next to their share.',
+        at: 36.2,
+      },
+      {
+        title: 'Take the second payment',
+        detail: 'Guest 2 pays by card. Tap Card next to their share.',
+        at: 40.4,
+      },
+      {
+        title: 'Pick the card type',
+        detail: 'Tap the card brand, for example Visa.',
+        at: 44.6,
+      },
+      {
+        title: 'Tap Charge',
+        detail: 'This records Guest 2 as paid and closes the bill.',
+        at: 48.8,
+      },
+    ],
+    goodToKnow: [
+      {
+        title: 'Three ways to split',
+        detail: 'Equal Split divides the total evenly. Split by Items gives each person their own items. Custom Amounts lets you type an exact amount for each person.',
+      },
+      {
+        title: 'A started split cannot be cancelled',
+        detail: 'Once one person has paid their share, the split stays. Check the items with the table before you take the first payment.',
+      },
+    ],
+    troubleshooting: [
+      {
+        title: 'Create Split will not work',
+        detail: 'An item is still unassigned. Every item on the bill must be ticked for one of the people.',
+      },
+    ],
+    related: ['split-bill-between-people', 'cash-and-card-split', 'print-the-bill'],
+    order: 3,
     updated: '2026-11-24',
   },
   {
@@ -223,7 +319,7 @@ export const paymentsGuides: AcademyGuide[] = [
       },
     ],
     related: ['split-bill-between-people', 'card-payment-with-tip', 'close-shift'],
-    order: 3,
+    order: 4,
     updated: '2026-11-24',
   },
   {
@@ -306,8 +402,185 @@ export const paymentsGuides: AcademyGuide[] = [
         detail: 'Apply the discount before payment. To give money back on an order that is already paid, a manager does a refund.',
       },
     ],
-    related: ['refund-an-order', 'card-payment-with-tip', 'view-sales-report'],
-    order: 4,
+    related: ['discount-one-item', 'create-a-discount-code', 'card-payment-with-tip'],
+    order: 5,
+    updated: '2026-11-24',
+  },
+  {
+    slug: 'discount-one-item',
+    title: 'Discount one item',
+    summary: 'Take money off a single item with a ready-made item discount, and leave the rest of the order at full price.',
+    intro: [
+      'Sometimes one item deserves the discount, not the whole bill: a dessert that arrived late, or a promotion on one product. An item discount lowers the price of that line only.',
+      'Item discounts are ready-made rules that your manager or owner sets up. On the POS you choose the rule, then tick which items in the cart it applies to.',
+      'The cart shows the result straight away: the line shows the percentage and its new price, and the total drops by the same amount.',
+    ],
+    topic: 'payments',
+    roles: ['cashier', 'waiter', 'manager'],
+    level: 'everyday',
+    tags: ['discount', 'item-discount', 'promotion', 'cash'],
+    video: { src: `${VIDEO_BASE}/discount-one-item.mp4`, poster: '/academy/posters/discount-one-item.jpg', seconds: 51.4 },
+    steps: [
+      {
+        title: 'Tap Discount',
+        detail: 'It is under the cart, next to Bill and Customer.',
+        at: 2.6,
+      },
+      {
+        title: 'Tap Item Discounts',
+        detail: 'These come off single items, not the whole order.',
+        at: 6.8,
+      },
+      {
+        title: 'Tap Apply next to a discount',
+        detail: 'Here a 10% item discount. It lists the items it works on.',
+        at: 11,
+      },
+      {
+        title: 'Tick the item to discount',
+        detail: 'Tap only the item that gets money off. Here Banoffee Pie.',
+        at: 15.2,
+      },
+      {
+        title: 'Tap Apply to 1 Item',
+        detail: 'The other items keep their full price.',
+        at: 19.4,
+      },
+      {
+        title: 'See the new line price',
+        detail: 'Banoffee Pie shows -10% and drops from 7.99 to 7.19.',
+        at: 23.6,
+      },
+      {
+        title: 'Check the total, then tap Pay',
+        detail: 'The total is now AED 19.18 instead of 19.98.',
+        at: 27.8,
+      },
+      {
+        title: 'Pick a payment method',
+        detail: 'Here the guest pays cash.',
+        at: 32,
+      },
+      {
+        title: 'Enter the cash received',
+        detail: 'Tap a note value, or Exact Amount.',
+        at: 36.2,
+      },
+      {
+        title: 'Confirm the payment',
+        detail: 'Tap Pay to finish.',
+        at: 40.4,
+      },
+    ],
+    goodToKnow: [
+      {
+        title: 'A rule only works on its own items',
+        detail: 'Each item discount lists the items it can be used on. Items in the cart that are not on the list cannot be ticked.',
+      },
+      {
+        title: 'Whole bill instead?',
+        detail: 'To take money off the whole order, use an order discount from the same Discount window.',
+      },
+    ],
+    troubleshooting: [
+      {
+        title: 'There is no Item Discounts tab',
+        detail: 'No item discount is available right now. Rules can be limited to certain hours and certain items. Ask your manager which ones should be active.',
+      },
+    ],
+    related: ['apply-a-discount', 'create-a-discount-code', 'card-payment-with-tip'],
+    order: 6,
+    updated: '2026-11-24',
+  },
+  {
+    slug: 'pay-later-and-collect',
+    title: 'Sell on Pay Later and collect the money',
+    summary: 'Charge an order to a customer’s account, then record the payment when they settle what they owe.',
+    intro: [
+      'Due / Pay Later is for customers you trust to pay afterwards: a neighbouring office that settles weekly, or a regular who pays at the end of the month. The order is closed, and the amount is added to what the customer owes.',
+      'It needs a customer on the order, because the debt has to belong to someone. Before you confirm, the payment screen shows what the customer already owes and their credit limit.',
+      'When they pay, open Reports > Customer Dues, find their row and record a settlement. Their balance goes down by the amount you record.',
+    ],
+    topic: 'payments',
+    roles: ['cashier', 'manager', 'owner'],
+    level: 'advanced',
+    tags: ['pay-later', 'customer', 'credit', 'customer-dues', 'settlement', 'cash'],
+    video: { src: `${VIDEO_BASE}/pay-later-and-collect.mp4`, poster: '/academy/posters/pay-later-and-collect.jpg', seconds: 55.6 },
+    steps: [
+      {
+        title: 'Tap Customer',
+        detail: 'Pay Later needs a customer on the order.',
+        at: 2.6,
+      },
+      {
+        title: 'Find the customer',
+        detail: 'Type their name or phone. New guest? Tap New Customer.',
+        at: 6.8,
+      },
+      {
+        title: 'Tap the customer',
+        detail: 'Check the name and phone number first.',
+        at: 11,
+      },
+      {
+        title: 'Tap Pay',
+        detail: 'The payment screen opens.',
+        at: 15.2,
+      },
+      {
+        title: 'Tap Due / Pay Later',
+        detail: 'No money is taken now. It is charged to their account.',
+        at: 19.4,
+      },
+      {
+        title: 'Tap Charge to Account',
+        detail: 'You can see what they already owe and their credit limit.',
+        at: 23.6,
+      },
+      {
+        title: 'Later: open Reports > Customer Dues',
+        detail: 'It lists who owes money, and how much is outstanding.',
+        at: 27.8,
+      },
+      {
+        title: 'Tap Settle on their row',
+        detail: 'This opens the customer’s Account tab.',
+        at: 32,
+      },
+      {
+        title: 'Tap Record Settlement',
+        detail: 'The account shows what they owe and each unpaid order.',
+        at: 36.2,
+      },
+      {
+        title: 'Pick how they paid',
+        detail: 'The full amount owed is filled in. Here they pay cash.',
+        at: 40.4,
+      },
+      {
+        title: 'Tap Record Settlement',
+        detail: 'The payment is saved and the debt goes down.',
+        at: 44.6,
+      },
+    ],
+    goodToKnow: [
+      {
+        title: 'Oldest debt first',
+        detail: 'A settlement is applied to the customer’s oldest unpaid order first, unless you choose otherwise.',
+      },
+      {
+        title: 'Cash settlements go in the drawer',
+        detail: 'Record a cash settlement while a shift is open. It is added to the cash Till expects in the drawer for that shift.',
+      },
+    ],
+    troubleshooting: [
+      {
+        title: 'Due / Pay Later cannot be used',
+        detail: 'Add a customer to the order first. The amount can only be charged to a named customer.',
+      },
+    ],
+    related: ['add-customer-to-order', 'card-payment-with-tip', 'close-shift'],
+    order: 7,
     updated: '2026-11-24',
   },
 ]

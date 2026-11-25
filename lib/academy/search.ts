@@ -36,7 +36,10 @@ export const TOPIC_ORDER: AcademyTopic[] = [
   'payments',
   'tables',
   'order-management',
-  'back-office',
+  'menu',
+  'setup',
+  'kitchen-stock',
+  'reports',
 ]
 
 type ParamSource = URLSearchParams | Record<string, string | string[] | undefined>

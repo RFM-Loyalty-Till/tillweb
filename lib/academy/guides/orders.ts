@@ -481,8 +481,99 @@ export const ordersGuides: AcademyGuide[] = [
         detail: 'Phone and app delivery orders save the customer, so their details come up the next time you type their number.',
       },
     ],
-    related: ['takeaway-order', 'custom-item', 'find-an-order'],
+    related: ['add-customer-to-order', 'takeaway-order', 'custom-item'],
     order: 6,
+    updated: '2026-11-24',
+  },
+  {
+    slug: 'add-customer-to-order',
+    title: 'Add a customer to an order',
+    summary: 'Link an order to a guest by phone number or name, so it is saved to their history.',
+    intro: [
+      'Adding a customer ties the order to a person. Their past orders are kept in one place, and the order carries their name and phone number on the payment screen.',
+      'Search first. Typing a phone number is the quickest and safest way, because two guests can share a name. Only tap New Customer when the guest is not in the list.',
+      'Some payments need a customer on the order, for example charging a bill to an account with Due / Pay Later.',
+    ],
+    topic: 'orders',
+    roles: ['cashier', 'waiter'],
+    level: 'everyday',
+    tags: ['customer', 'phone', 'loyalty', 'takeaway'],
+    video: { src: `${VIDEO_BASE}/add-customer-to-order.mp4`, poster: '/academy/posters/add-customer-to-order.jpg', seconds: 55.6 },
+    steps: [
+      {
+        title: 'Tap Customer',
+        detail: 'It is under the cart, next to Discount.',
+        at: 2.6,
+      },
+      {
+        title: 'New guest? Tap New Customer',
+        detail: 'For a returning guest, search instead.',
+        at: 6.8,
+      },
+      {
+        title: 'Search by phone number',
+        detail: 'Type the guest’s mobile number or name.',
+        at: 11,
+      },
+      {
+        title: 'Tap the right customer',
+        detail: 'Check the name and number, then tap it.',
+        at: 15.2,
+      },
+      {
+        title: 'The customer is on the order',
+        detail: 'Their phone, name and address show at the top of the cart.',
+        at: 19.4,
+      },
+      {
+        title: 'The Customer button shows their name',
+        detail: 'Tap it again to change or remove the customer.',
+        at: 23.6,
+      },
+      {
+        title: 'Tap Pay',
+        detail: 'The customer stays linked when you pay.',
+        at: 27.8,
+      },
+      {
+        title: 'The customer shows here too',
+        detail: 'The payment screen shows who the order belongs to.',
+        at: 32,
+      },
+      {
+        title: 'Pick a payment method',
+        detail: 'Here the guest pays cash.',
+        at: 36.2,
+      },
+      {
+        title: 'Enter the cash received',
+        detail: 'Tap a note value, or Exact Amount.',
+        at: 40.4,
+      },
+      {
+        title: 'Confirm the payment',
+        detail: 'Tap Pay to finish.',
+        at: 44.6,
+      },
+    ],
+    goodToKnow: [
+      {
+        title: 'Change or remove the customer',
+        detail: 'After you pick a customer, the Customer button shows their name. Tap it again to change or remove them before you take payment.',
+      },
+      {
+        title: 'Loyalty points',
+        detail: 'When loyalty is switched on, the points for the order go to the customer you added.',
+      },
+    ],
+    troubleshooting: [
+      {
+        title: 'Two customers match the search',
+        detail: 'Check the phone number before you tap. Picking the wrong person puts the order in the wrong history.',
+      },
+    ],
+    related: ['pay-later-and-collect', 'delivery-order', 'takeaway-order'],
+    order: 7,
     updated: '2026-11-24',
   },
 ]

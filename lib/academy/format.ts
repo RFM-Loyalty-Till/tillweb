@@ -3,12 +3,13 @@
 
 import type { AcademyLevel, AcademyRole } from './types'
 
-export const ROLE_ORDER: AcademyRole[] = ['cashier', 'waiter', 'manager', 'owner']
+export const ROLE_ORDER: AcademyRole[] = ['cashier', 'waiter', 'kitchen', 'manager', 'owner']
 export const LEVEL_ORDER: AcademyLevel[] = ['basics', 'everyday', 'advanced']
 
 export const roleLabel: Record<AcademyRole, string> = {
   cashier: 'Cashier',
   waiter: 'Waiter',
+  kitchen: 'Kitchen',
   manager: 'Manager',
   owner: 'Owner',
 }
@@ -16,6 +17,7 @@ export const roleLabel: Record<AcademyRole, string> = {
 const rolePlural: Record<AcademyRole, string> = {
   cashier: 'cashiers',
   waiter: 'waiters',
+  kitchen: 'kitchen staff',
   manager: 'managers',
   owner: 'owners',
 }

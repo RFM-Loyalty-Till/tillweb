@@ -62,10 +62,10 @@ export function tagCounts(): { tag: string; count: number }[] {
   )
 }
 
-/** Tags shared by at least two guides: the ones worth offering as filters. */
+/** Tags shared by at least three guides: the ones worth offering as filters. */
 export function commonTags(): string[] {
   return tagCounts()
-    .filter(({ count }) => count >= 2)
+    .filter(({ count }) => count >= 3)
     .map(({ tag }) => tag)
 }
 
