@@ -3,8 +3,8 @@ import type { AcademyTopicInfo } from './types'
 export const topics: AcademyTopicInfo[] = [
   {
     slug: 'getting-started',
-    name: 'Shifts and the cash drawer',
-    description: 'Open and close your shift, hand the till to the next person, and record cash going in or out of the drawer.',
+    name: 'Shifts, cash and the day',
+    description: 'Open and close your shift, hand the till to the next person, record cash in and out of the drawer, and open and close the day.',
   },
   {
     slug: 'orders',

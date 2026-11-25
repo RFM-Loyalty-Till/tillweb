@@ -324,7 +324,7 @@ export const reportsGuides: AcademyGuide[] = [
         detail: 'Export Excel, Export PDF and Print are at the top right of the report.',
       },
     ],
-    related: ['view-sales-report', 'close-shift', 'cash-in-and-out'],
+    related: ['close-the-day', 'view-sales-report', 'cash-in-and-out'],
     order: 4,
     updated: '2026-11-24',
   },

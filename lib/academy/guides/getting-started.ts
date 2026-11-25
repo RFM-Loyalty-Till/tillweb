@@ -143,7 +143,7 @@ export const gettingStartedGuides: AcademyGuide[] = [
         detail: 'Count again before you confirm. If it is still different, type the amount you counted, not the expected figure, and tell your manager.',
       },
     ],
-    related: ['open-shift', 'cash-in-and-out', 'read-the-z-report'],
+    related: ['close-the-day', 'cash-in-and-out', 'read-the-z-report'],
     order: 2,
     updated: '2026-11-24',
   },
@@ -322,6 +322,167 @@ export const gettingStartedGuides: AcademyGuide[] = [
     ],
     related: ['close-shift', 'record-a-purchase', 'read-the-z-report'],
     order: 4,
+    updated: '2026-11-24',
+  },
+  {
+    slug: 'open-the-day',
+    title: 'Open the day',
+    summary: 'Start the daily session with the opening cash, so shifts can start and orders can be taken.',
+    intro: [
+      'The daily session is the business day in Till. Until it is open, no till can start a shift and no order can be taken. An owner or manager opens it once, before the first shift.',
+      'Opening the day asks for one thing: the cash in the drawer at the start. Count the float and type the amount. Leave it empty if the drawer starts at zero.',
+      'The session belongs to the branch. Once it is open, every till in that branch can start its own shift from the POS.',
+    ],
+    topic: 'getting-started',
+    roles: ['manager', 'owner'],
+    level: 'everyday',
+    tags: ['daily-session', 'opening-cash', 'float', 'cash', 'shift'],
+    video: { src: `${VIDEO_BASE}/open-the-day.mp4`, poster: '/academy/posters/open-the-day.jpg', seconds: 43 },
+    steps: [
+      {
+        title: 'Open Shift Management',
+        detail: 'No Active Session means the day is not open yet.',
+        at: 2.6,
+      },
+      {
+        title: 'Tap Start Session',
+        detail: 'Owners and managers open the day, once, before the first shift.',
+        at: 6.8,
+      },
+      {
+        title: 'Type the opening cash',
+        detail: 'Count the cash in the drawer at the start of the day. Here: AED 200.',
+        at: 11,
+      },
+      {
+        title: 'Add a note if you need one',
+        detail: 'Optional. For example who counted the float.',
+        at: 15.2,
+      },
+      {
+        title: 'Why the day must be open',
+        detail: 'Shifts cannot start and orders cannot be taken without it.',
+        at: 19.4,
+      },
+      {
+        title: 'Tap Start Daily Session',
+        detail: 'The day opens for every till in the branch.',
+        at: 23.6,
+      },
+      {
+        title: 'The daily session is active',
+        detail: 'It shows the opening cash and the sales for the day as they come in.',
+        at: 27.8,
+      },
+      {
+        title: 'On the POS, tap Start Shift',
+        detail: 'Each till starts its own shift once the day is open.',
+        at: 32,
+      },
+    ],
+    goodToKnow: [
+      {
+        title: 'Typed the wrong float?',
+        detail: 'The Daily Session card shows the opening cash with an Edit float link next to it.',
+      },
+      {
+        title: 'Cash is tracked from here',
+        detail: 'Cash sales, pay ins and cash paid out are all counted against the opening cash until the day is closed.',
+      },
+    ],
+    troubleshooting: [
+      {
+        title: 'The POS will not start a shift',
+        detail: 'The day is not open yet. Ask a manager or owner to start the daily session in Shift Management.',
+      },
+    ],
+    related: ['open-shift', 'close-the-day', 'cash-in-and-out'],
+    order: 5,
+    updated: '2026-11-24',
+  },
+  {
+    slug: 'close-the-day',
+    title: 'Close the day',
+    summary: 'Close the daily session after the last shift: check orders and shifts, count the cash and save the day’s report.',
+    intro: [
+      'Closing the day ends the daily session and fixes the day’s figures. It is the last job of the night, done by an owner or manager after the last shift has ended.',
+      'Till checks two things before it lets you close. Every order must be paid or voided, and every shift must be ended. The Daily Session card shows the number of open orders, and Shift History shows any shift still active.',
+      'Then you count. For each payment type, Till shows its own figure next to the one you declare, and the difference as a variance. Closing cannot be undone, so read the summary before you confirm.',
+    ],
+    topic: 'getting-started',
+    roles: ['manager', 'owner'],
+    level: 'everyday',
+    tags: ['daily-session', 'end-of-day', 'cash', 'cash-count', 'reports', 'shift'],
+    video: { src: `${VIDEO_BASE}/close-the-day.mp4`, poster: '/academy/posters/close-the-day.jpg', seconds: 47.2 },
+    steps: [
+      {
+        title: 'Open Shift Management',
+        detail: 'The Daily Session card shows the day that is open now.',
+        at: 2.6,
+      },
+      {
+        title: 'Check for open orders',
+        detail: 'Pay or void open orders before you close the day.',
+        at: 6.8,
+      },
+      {
+        title: 'Check for open shifts',
+        detail: 'Every shift must be ended first. Tap End Shift on any still Active.',
+        at: 11,
+      },
+      {
+        title: 'Tap Close Session',
+        detail: 'Owners and managers only.',
+        at: 15.2,
+      },
+      {
+        title: 'Check the day summary',
+        detail: 'Shifts, orders, total sales and the opening cash.',
+        at: 19.4,
+      },
+      {
+        title: 'Enter the cash you counted',
+        detail: 'Type it on the keypad, or tap copy to use the system figure.',
+        at: 23.6,
+      },
+      {
+        title: 'See how expected cash is worked out',
+        detail: 'Opening cash + cash sales + pay ins − cash paid out.',
+        at: 27.8,
+      },
+      {
+        title: 'Tap Close Daily Session',
+        detail: 'It cannot be undone. The system checks shifts and orders first.',
+        at: 32,
+      },
+      {
+        title: 'The session report opens',
+        detail: 'Print it or download the PDF for your records.',
+        at: 36.2,
+      },
+    ],
+    goodToKnow: [
+      {
+        title: 'Count the cash, do not copy it',
+        detail: 'The copy button fills in Till’s own figure. For cash, type what you actually counted, so a shortage or surplus shows as a variance.',
+      },
+      {
+        title: 'The report stays',
+        detail: 'The Daily Session Report opens when the day is closed. Print it or download the PDF. Closed days are listed under Session History.',
+      },
+    ],
+    troubleshooting: [
+      {
+        title: 'It says orders are still open',
+        detail: 'The message lists the order numbers. Pay or void each one, then tap Close Daily Session again.',
+      },
+      {
+        title: 'An old order will not void',
+        detail: 'Orders older than 24 hours cannot be voided. Take payment for the order to close it.',
+      },
+    ],
+    related: ['close-shift', 'read-the-z-report', 'open-the-day'],
+    order: 6,
     updated: '2026-11-24',
   },
 ]
